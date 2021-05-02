@@ -1,0 +1,49 @@
+{
+  "name": "chill-bot",
+  "description": "A super chill bot",
+  "author": "lydian-lights",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node --transpile-only -r tsconfig-paths/register src/index.ts",
+    "start:dev": "ts-node -r tsconfig-paths/register src/index.ts",
+    "dev": "nodemon -e ts --exec \"npm run start:dev\"",
+    "lint": "eslint .",
+    "db:create:dev": "echo DROP DATABASE IF EXISTS chillbot_dev; CREATE DATABASE chillbot_dev; | psql -U postgres",
+    "db:migrate": "knex migrate:latest",
+    "db:migrate:make": "knex migrate:make -x ts",
+    "db:reset:dev": "npm run db:create:dev && npm run db:migrate",
+    "heroku": "set HEROKU_APP=lydian-chill-bot&& heroku",
+    "heroku:staging": "set HEROKU_APP=lydian-chill-bot-staging&& heroku"
+  },
+  "engines": {
+    "node": "v14.15.0"
+  },
+  "dependencies": {
+    "discord.js": "https://github.com/lydianlights/discord.js.git",
+    "dotenv": "^8.2.0",
+    "glob": "^7.1.6",
+    "knex": "^0.21.19",
+    "moment": "^2.29.1",
+    "pg": "^8.6.0",
+    "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/node": "^14.14.43",
+    "@types/ws": "^7.4.2",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "lint-staged": "^10.5.4",
+    "nodemon": "^2.0.7"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --fix"
+  }
+}
