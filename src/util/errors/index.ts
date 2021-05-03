@@ -3,8 +3,9 @@ export class BotError extends Error {
   public name = BotError.NAME;
   public internalOnly: boolean = false;
   public static defaultMessage = "Oops... I just don't know what went wrong.";
-  constructor(message?: string) {
+  constructor(message?: string, internalOnly?: boolean) {
     super(message || BotError.defaultMessage);
+    this.internalOnly = !!internalOnly;
   }
 }
 

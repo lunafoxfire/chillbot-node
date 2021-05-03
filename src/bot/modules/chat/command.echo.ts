@@ -7,7 +7,7 @@ const cmd: Command<ArgumentType.FullString> = {
   description: 'Echoes the given message',
   args: { name: 'message', description: 'The message to echo' },
   execute: async (msg, input) => {
-    await msg.channel.send(input);
+    await msg.reply(input);
   },
 };
 

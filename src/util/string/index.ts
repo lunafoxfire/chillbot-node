@@ -1,7 +1,13 @@
+import { User } from 'discord.js';
 import { ArgumentError } from 'util/errors';
 
 export function isTruthy(str: string | undefined): boolean {
   return !!str && !(str.toLowerCase() === 'false');
+}
+
+export function getMentionString(user: User | null): string {
+  if (!user) return '';
+  return `<@!${user.id}>`;
 }
 
 export function parseArgList(str: string): string[] {

@@ -21,7 +21,7 @@ const envLogLevelDefaults: { [id: string]: LogLevel } = {
 };
 
 const envDefaultLogLevel = envLogLevelDefaults[String(process.env.NODE_ENV)] || LogLevels.INFO;
-const envLogLevel = Object.values(LogLevels).find(({ key }) => process.env.LOG_LEVEL === key);
+const envLogLevel = Object.values(LogLevels).find(({ key }) => process.env.LOG_LEVEL?.toLowerCase() === key.toLowerCase());
 
 
 class Logger {
@@ -71,7 +71,15 @@ class Logger {
         logFunc = console.log;
       }
       const timestamp = dateTime(new Date());
-      const prefix = this.label ? `[${this.label}] [${level.key}] <${timestamp}>` : `[${level.key}] <${timestamp}>`;
+      const prefixParts = [];
+      if (this.label) {
+        prefixParts.push(`[${this.label}]`);
+      }
+      if (level !== LogLevels.NONE && level !== LogLevels.SILLY) {
+        prefixParts.push(`[${level.key}]`);
+      }
+      prefixParts.push(`<${timestamp}>`);
+      const prefix = prefixParts.join(' ');
       if (typeof message === 'string') {
         logFunc(`${prefix} ${message}`);
       } else {
@@ -82,8 +90,6 @@ class Logger {
   }
 }
 
-export function createLogger(label: string) {
+export function createLogger(label?: string) {
   return new Logger(label);
 }
-
-export const logger = createLogger('bot');

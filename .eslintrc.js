@@ -1,9 +1,6 @@
-/* eslint-disable quote-props */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 const OFF = 0;
 const WARN = 1;
 const ERROR = 2;
-/* eslint-enable @typescript-eslint/no-unused-vars */
 
 module.exports = {
   root: true,
@@ -52,6 +49,17 @@ module.exports = {
     'object-curly-newline': OFF,
     'no-plusplus': OFF,
     'no-undef-init': OFF,
+    '@typescript-eslint/no-use-before-define': [ERROR,
+      {
+        'functions': false,
+      },
+    ],
+    'no-async-promise-executor': OFF,
+    'no-await-in-loop': OFF,
+    'no-irregular-whitespace': OFF,
+    '@typescript-eslint/naming-convention': OFF,
+    'quote-props': OFF,
+    '@typescript-eslint/no-unused-vars': OFF,
 
     // Typescript handles these
     'no-undef': OFF,

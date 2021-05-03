@@ -30,7 +30,7 @@ export interface Command<ArgType = ArgumentType.None | ArgumentType.FullString |
   name: string,
   aliases?: string[],
   description: string,
-  args?: ArgDef<ArgType>,
+  args: ArgDef<ArgType>,
   guildOnly?: boolean,
   chillBrosOnly?: boolean,
   ownerOnly?: boolean,

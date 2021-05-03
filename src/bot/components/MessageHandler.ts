@@ -2,33 +2,41 @@ import { Message } from 'discord.js';
 import { createLogger } from 'util/logger';
 import { BotError, ArgumentError, UserPermissionError, BotPermissionError } from 'util/errors';
 import { guildIds, userIds } from 'util/constants';
-import { parseArgList } from 'util/string';
+import { getMentionString, parseArgList } from 'util/string';
+import { createPrefixRegex, createMentionPrefixRegex, createCommandRegex } from 'util/string/regex';
 import Bot from 'bot';
 import { Command, Reaction } from 'bot/types';
 
 const DEFAULT_CMD_PREFIX = '!';
 
 const logger = createLogger('MessageHandler');
+const chatLogger = createLogger('chat');
 
 export default class MessageHandler {
   private static initialized: boolean = false;
-  private static registeredCommands: { command: Command, keywords: string[] }[] = [];
+  private static registeredCommands: { command: Command, keywords: { text: string, regex: RegExp }[] }[] = [];
   private static registeredReactions: Reaction[] = [];
+
+  private static prefixRegex: RegExp;
+  private static mentionPrefixRegex: RegExp;
 
   public static init() {
     if (MessageHandler.initialized) {
       logger.error('Tried to init MessageHandler but it is already initialized');
       return;
     }
+    MessageHandler.prefixRegex = createPrefixRegex(DEFAULT_CMD_PREFIX);
+    if (!Bot.client.user) throw new Error('Bot.client.user somehow doesn\'t exist???');
+    MessageHandler.mentionPrefixRegex = createMentionPrefixRegex(getMentionString(Bot.client.user));
     Bot.client.on('message', MessageHandler.handleMessage);
     logger.info('Ready to listen for commands');
   }
 
   public static registerCommand(command: Command) {
-    const keywords = [command.name];
+    const keywords = [{ text: command.name, regex: createCommandRegex(command.name) }];
     if (command.aliases && command.aliases.length) {
       for (const alias of command.aliases) {
-        keywords.push(alias);
+        keywords.push({ text: alias, regex: createCommandRegex(alias) });
       }
     }
     MessageHandler.registeredCommands.push({ command, keywords });
@@ -38,6 +46,10 @@ export default class MessageHandler {
   public static registerReaction(reaction: Reaction) {
     MessageHandler.registeredReactions.push(reaction);
     logger.info(`Registered reaction: ${reaction.name}`);
+  }
+
+  public static getRegisteredCommands() {
+    return MessageHandler.registeredCommands;
   }
 
   public static validateCommandPermissions(msg: Message, command: Command): { valid: Boolean, error: Error | undefined } {
@@ -83,6 +95,7 @@ export default class MessageHandler {
       logger.warn(`Partial message recieved! id: ${msg.id}`);
       return;
     }
+    MessageHandler.chatLog(msg);
     if (msg.author.bot) return;
     try {
       if (await MessageHandler.handleAsCommand(msg)) return;
@@ -93,20 +106,13 @@ export default class MessageHandler {
   }
 
   private static async handleAsCommand(msg: Message): Promise<boolean> {
-    let commandText;
-    if (msg.content.startsWith(DEFAULT_CMD_PREFIX)) {
-      commandText = msg.content.substring(DEFAULT_CMD_PREFIX.length);
-    } else {
-      // Mentioning bot counts as command prefix
-      const mentionPrefix = `${Bot.client.user}`;
-      if (msg.content.startsWith(mentionPrefix)) {
-        commandText = msg.content.substring(mentionPrefix.length).trimLeft();
-      }
-    }
-    if (commandText) {
+    let match = msg.content.match(MessageHandler.prefixRegex) || msg.content.match(MessageHandler.mentionPrefixRegex);
+    if (match) {
+      const commandText = match[1];
       for (const { command, keywords } of MessageHandler.registeredCommands) {
         for (const keyword of keywords) {
-          if (commandText.startsWith(keyword)) {
+          match = commandText.match(keyword.regex);
+          if (match) {
             const { valid, error } = MessageHandler.validateCommandPermissions(msg, command);
             if (!valid) {
               // no
@@ -114,7 +120,7 @@ export default class MessageHandler {
               throw error;
             }
             logger.verbose(`Executing command: ${command.name}`);
-            const argumentText = commandText.substring(keyword.length).trimLeft();
+            const argumentText = match[1];
             const args = MessageHandler.parseArgsFromText(command, argumentText);
             // eslint-disable-next-line no-await-in-loop
             await command.execute(msg, args);
@@ -161,5 +167,11 @@ export default class MessageHandler {
       return parseArgList(argumentText);
     }
     return argumentText;
+  }
+
+  private static chatLog(msg: Message) {
+    const channelName = msg.channel.type === 'dm' ? 'dm' : `${msg.guild?.name}#${msg.channel.name}`;
+    // const formattedMsg = msg.content.split('\n').join('\n  ');
+    chatLogger.silly(`${channelName}@${msg.author.username}: ${msg.content}`);
   }
 }
