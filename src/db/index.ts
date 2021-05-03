@@ -24,7 +24,7 @@ export default class DB {
 
   private static getConnectionConfig(): any {
     const config: any = {
-      ssl: isTruthy(process.env.PG_SSL),
+      ssl: isTruthy(process.env.PG_SSL) ? { rejectUnauthorized: false } : false, // fix for heroku
     };
 
     if (process.env.DATABASE_URL) {
