@@ -10,23 +10,9 @@ export default class DB {
 
   public static async init() {
     logger.info('Connecting to database...');
-    const connection = process.env.DATABASE_URL
-      ? {
-        uri: process.env.DATABASE_URL,
-      }
-      : {
-        host: process.env.PG_HOST,
-        port: Number(process.env.PG_PORT),
-        user: process.env.PG_USER,
-        password: process.env.PG_PASSWORD,
-        database: process.env.PG_DATABASE,
-      };
     DB.knex = knexConfig({
       client: 'pg',
-      connection: {
-        ...connection,
-        ssl: isTruthy(process.env.PG_SSL),
-      },
+      connection: DB.getConnectionConfig(),
       pool: { min: 0, max: 7 },
       debug: isTruthy(process.env.KNEX_DEBUG),
     });
@@ -34,5 +20,23 @@ export default class DB {
     logger.info('Running migrations...');
     await DB.knex.migrate.latest(knexSettings.migrations);
     logger.info('Database ready!');
+  }
+
+  private static getConnectionConfig(): any {
+    const config: any = {
+      ssl: isTruthy(process.env.PG_SSL),
+    };
+
+    if (process.env.DATABASE_URL) {
+      config.connectionString = process.env.DATABASE_URL;
+    } else {
+      config.host = process.env.PG_HOST;
+      config.port = Number(process.env.PG_PORT);
+      config.user = process.env.PG_USER;
+      config.password = process.env.PG_PASSWORD;
+      config.database = process.env.PG_DATABASE;
+    }
+
+    return config;
   }
 }
