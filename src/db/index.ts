@@ -12,7 +12,7 @@ export default class DB {
     logger.info('Connecting to database...');
     const connection = process.env.DATABASE_URL
       ? {
-        url: process.env.DATABASE_URL,
+        uri: process.env.DATABASE_URL,
       }
       : {
         host: process.env.PG_HOST,
