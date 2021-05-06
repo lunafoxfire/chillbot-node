@@ -13,6 +13,7 @@
     "db:migrate": "knex migrate:latest",
     "db:migrate:make": "knex migrate:make -x ts",
     "db:reset:dev": "npm run db:create:dev && npm run db:migrate",
+    "db:print-schema": "ts-node -r tsconfig-paths/register scripts/print-schema.ts",
     "heroku": "set HEROKU_APP=lydian-chill-bot&& heroku",
     "heroku:staging": "set HEROKU_APP=lydian-chill-bot-staging&& heroku"
   },

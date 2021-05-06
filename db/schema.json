@@ -1,0 +1,14 @@
+{
+  "user_data": [
+    "id",
+    "user_id",
+    "guild_id",
+    "doot_dollars",
+    "anime_count"
+  ],
+  "guild_data": [
+    "id",
+    "guild_id",
+    "config"
+  ]
+}
