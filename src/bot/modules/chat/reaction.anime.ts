@@ -1,4 +1,4 @@
-import { Reaction } from 'bot/types';
+import { Reaction, CooldownType } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
 import { getRandomImageURL } from 'services/tenor';
 import { createWordRegex } from 'util/string/regex';
@@ -27,6 +27,7 @@ const sparkleCat = `｡･:･ﾟ★     ,｡･:･ﾟ☆
 const cmd: Reaction = {
   name: 'anime-reaction',
   description: 'Reacts to mentioning anime',
+  cooldown: { time: 10, type: CooldownType.PerUser },
   test: (msg) => regex.test(msg.content),
   execute: async (msg) => {
     let userData;

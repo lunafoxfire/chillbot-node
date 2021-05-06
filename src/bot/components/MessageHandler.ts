@@ -6,6 +6,7 @@ import { getMentionString, parseArgList } from 'util/string';
 import { createPrefixRegex, createMentionPrefixRegex, createCommandRegex } from 'util/string/regex';
 import Bot from 'bot';
 import { Command, Reaction } from 'bot/types';
+import CooldownHandler from 'bot/components/CooldownHandler';
 
 const DEFAULT_CMD_PREFIX = '!';
 
@@ -135,9 +136,11 @@ export default class MessageHandler {
   private static async handleAsReaction(msg: Message): Promise<boolean> {
     for (const reaction of MessageHandler.registeredReactions) {
       if (reaction.test(msg)) {
-        logger.verbose(`Executing reaction: ${reaction.name}`);
-        // eslint-disable-next-line no-await-in-loop
-        await reaction.execute(msg);
+        if (CooldownHandler.checkCooldown(msg, reaction, true)) {
+          logger.verbose(`Executing reaction: ${reaction.name}`);
+          // eslint-disable-next-line no-await-in-loop
+          await reaction.execute(msg);
+        }
         return true;
       }
     }
