@@ -12,7 +12,7 @@ export class BotError extends Error {
 export class ArgumentError extends BotError {
   public static NAME = 'ArgumentError';
   public name = ArgumentError.NAME;
-  public static defaultMessage = "Sorry, I didn't understand that @_@ Are some arguments missing?";
+  public static defaultMessage = "Sorry, I didn't understand that... @_@\nTry checking the command arguments";
   constructor(message?: string) {
     super(message || ArgumentError.defaultMessage);
   }

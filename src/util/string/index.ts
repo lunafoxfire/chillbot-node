@@ -10,55 +10,67 @@ export function getMentionString(user: User | null): string {
   return `<@!${user.id}>`;
 }
 
+const whitespace = /\s/;
 export function parseArgList(str: string): string[] {
   if (!str || !str.length) {
     throw new ArgumentError();
   }
-
   const list: string[] = [];
-  let argStartIndex: number | undefined = undefined;
-  let insideQuote = false;
-
+  let currentArg: string = '';
+  let readingArg = false;
+  let readingQuotedArg = false;
   for (let i = 0; i < str.length; i++) {
-    if (argStartIndex === undefined) {
-      if (str[i] === '"') {
-        if (!(i === 0 || str[i - 1] === ' ') || i === str.length - 1) {
+    const prevChar = i > 0 ? str[i - 1] : null;
+    const char = str[i];
+    const nextChar = i < str.length - 1 ? str[i + 1] : null;
+    if (readingArg && readingQuotedArg) {
+      if (char === '"') {
+        if (nextChar && !whitespace.test(nextChar)) {
           throw new ArgumentError();
         }
-        insideQuote = true;
-        argStartIndex = i + 1;
-      } else if (str[i] !== ' ') {
-        if (!(i === 0 || str[i - 1] === ' ')) {
-          throw new ArgumentError();
-        }
-        argStartIndex = i;
+        list.push(currentArg);
+        currentArg = '';
+        readingArg = false;
+        readingQuotedArg = false;
+      } else {
+        currentArg += char;
       }
-    } else {
-      // eslint-disable-next-line no-lonely-if
-      if (str[i] === '"') {
-        if (!(i === str.length - 1 || str[i + 1] === ' ') || !insideQuote) {
+    } else if (readingArg && !readingQuotedArg) {
+      if (char === '"') {
+        throw new ArgumentError();
+      } else if (whitespace.test(char)) {
+        list.push(currentArg);
+        currentArg = '';
+        readingArg = false;
+        readingQuotedArg = false;
+      } else {
+        currentArg += char;
+      }
+    } else if (!readingArg) {
+      if (char === '"') {
+        if (prevChar && !whitespace.test(prevChar)) {
           throw new ArgumentError();
         }
-        const arg = str.substring(argStartIndex, i);
-        list.push(arg);
-        insideQuote = false;
-        argStartIndex = undefined;
-      } else if (str[i] === ' ') {
-        const arg = str.substring(argStartIndex, i - 1);
-        list.push(arg);
-        argStartIndex = undefined;
+        readingArg = true;
+        readingQuotedArg = true;
+      } else if (!whitespace.test(char)) {
+        if (prevChar && !whitespace.test(prevChar)) {
+          throw new ArgumentError();
+        }
+        currentArg += char;
+        readingArg = true;
+        readingQuotedArg = false;
       }
     }
   }
-
-  if (insideQuote) {
+  if (readingQuotedArg) {
     throw new ArgumentError();
   }
-  if (argStartIndex !== undefined) {
-    const arg = str.substring(argStartIndex, str.length);
-    list.push(arg);
-    argStartIndex = undefined;
+  if (readingArg) {
+    list.push(currentArg);
+    currentArg = '';
+    readingArg = false;
+    readingQuotedArg = false;
   }
-
   return list;
 }

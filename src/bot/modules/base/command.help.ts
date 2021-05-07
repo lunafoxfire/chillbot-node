@@ -29,10 +29,15 @@ function getAllCommandsHelp(msg: Message): string {
   const helpText = commands
     .map(({ command }) => {
       let argArray;
-      if (command.args && !Array.isArray(command.args)) {
-        argArray = [command.args];
+      if (command.args) {
+        argArray = Array.isArray(command.args) ? command.args : [command.args];
       }
-      const argText = argArray ? argArray.map((a) => ` <${a.name}>`).join(' ') : '';
+      const argText = argArray
+        ? argArray.map((a) => {
+          const argName = a.rest ? `...${a.name}` : a.name;
+          return ` <${argName}>`;
+        }).join(' ')
+        : '';
       return `\`!${command.name}${argText}\` - ${command.description}`;
     })
     .join('\n');
@@ -50,10 +55,15 @@ function getSpecificCommandHelp(msg: Message, commandName: string): string {
   const name = `\`${cmdInfo.command.name}\` - ${cmdInfo.command.description}\n`;
   const aliases = cmdInfo.command.aliases ? `aliases: ${cmdInfo.command.aliases.map((a) => `\`${a}\``).join(', ')}\n` : '';
   let argArray;
-  if (cmdInfo.command.args && !Array.isArray(cmdInfo.command.args)) {
-    argArray = [cmdInfo.command.args];
+  if (cmdInfo.command.args) {
+    argArray = Array.isArray(cmdInfo.command.args) ? cmdInfo.command.args : [cmdInfo.command.args];
   }
-  const args = argArray ? `arguments:${argArray.map((arg) => `\n  \`${arg.name}\` - ${arg.description}`)}` : '';
+  const args = argArray
+    ? `arguments:${argArray.map((arg) => {
+      const argName = arg.rest ? `...${arg.name}` : arg.name;
+      return `\n  \`${argName}\` - ${arg.description}`;
+    })}`
+    : '';
 
   const helpText = `${name}${aliases}${args}`;
   return helpText;

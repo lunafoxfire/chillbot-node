@@ -12,7 +12,7 @@ export interface Argument {
   name: string,
   description: string,
   optional?: boolean,
-  errorMessage?: string,
+  rest?: boolean,
 }
 
 
