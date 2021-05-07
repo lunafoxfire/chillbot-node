@@ -10,9 +10,9 @@ import { ArgumentError, BotError } from 'util/errors';
 
 const NUM_FRAMES = 14;
 const LINE_HEIGHT = 80;
-const MAX_LINE_WIDTH = 400;
-const MAX_TOTAL_WIDTH = 1200;
-const MAX_TOTAL_HEIGHT = 800;
+const LINE_BREAK_WIDTH = 400;
+const MAX_WIDTH = 1200;
+const MAX_HEIGHT = 800;
 const DIRECTORY = path.join(__dirname, '../../../..', '/assets/letters');
 
 const GIFS: any = {
@@ -120,13 +120,13 @@ const cmd: Command<ArgumentType.FullString> = {
 
       await Promise.all(promises);
     } catch (e) {
-      throw new BotError('oops something broke');
+      throw new BotError();
     }
 
     const words = cleanedMessage.split(' ');
     const { lines, width, height } = calculateLines(words, gifData);
 
-    if (width > MAX_TOTAL_WIDTH || height > MAX_TOTAL_HEIGHT) {
+    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
       throw new ArgumentError('˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚ Too big!');
     }
 
@@ -203,7 +203,7 @@ function calculateLines(words: string[], gifData: { [key: string]: GifData }): {
         currentLineWidth += EXTRA_PUNCTUATION[char].width;
       }
     }
-    if (currentLineWidth >= MAX_LINE_WIDTH) {
+    if (currentLineWidth >= LINE_BREAK_WIDTH) {
       newline();
     } else {
       currentLineWidth += EXTRA_PUNCTUATION[' '].width;

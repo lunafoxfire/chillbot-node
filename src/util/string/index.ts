@@ -1,5 +1,6 @@
 import { User } from 'discord.js';
 import { ArgumentError } from 'util/errors';
+import { WHITESPACE_REGEX } from './regex';
 
 export function isTruthy(str: string | undefined): boolean {
   return !!str && !(str.toLowerCase() === 'false');
@@ -10,7 +11,6 @@ export function getMentionString(user: User | null): string {
   return `<@!${user.id}>`;
 }
 
-const whitespace = /\s/;
 export function parseArgList(str: string): string[] {
   if (!str || !str.length) {
     throw new ArgumentError();
@@ -25,7 +25,7 @@ export function parseArgList(str: string): string[] {
     const nextChar = i < str.length - 1 ? str[i + 1] : null;
     if (readingArg && readingQuotedArg) {
       if (char === '"') {
-        if (nextChar && !whitespace.test(nextChar)) {
+        if (nextChar && !WHITESPACE_REGEX.test(nextChar)) {
           throw new ArgumentError();
         }
         list.push(currentArg);
@@ -38,7 +38,7 @@ export function parseArgList(str: string): string[] {
     } else if (readingArg && !readingQuotedArg) {
       if (char === '"') {
         throw new ArgumentError();
-      } else if (whitespace.test(char)) {
+      } else if (WHITESPACE_REGEX.test(char)) {
         list.push(currentArg);
         currentArg = '';
         readingArg = false;
@@ -48,13 +48,13 @@ export function parseArgList(str: string): string[] {
       }
     } else if (!readingArg) {
       if (char === '"') {
-        if (prevChar && !whitespace.test(prevChar)) {
+        if (prevChar && !WHITESPACE_REGEX.test(prevChar)) {
           throw new ArgumentError();
         }
         readingArg = true;
         readingQuotedArg = true;
-      } else if (!whitespace.test(char)) {
-        if (prevChar && !whitespace.test(prevChar)) {
+      } else if (!WHITESPACE_REGEX.test(char)) {
+        if (prevChar && !WHITESPACE_REGEX.test(prevChar)) {
           throw new ArgumentError();
         }
         currentArg += char;

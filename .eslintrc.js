@@ -60,6 +60,7 @@ module.exports = {
     '@typescript-eslint/naming-convention': OFF,
     'quote-props': OFF,
     '@typescript-eslint/no-unused-vars': OFF,
+    'no-continue': OFF,
 
     // Typescript handles these
     'no-undef': OFF,
