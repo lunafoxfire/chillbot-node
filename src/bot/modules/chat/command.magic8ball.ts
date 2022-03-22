@@ -1,5 +1,6 @@
 import { ArgumentType, Command } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
+import { reply } from 'util/discord/messages';
 
 const ANSWERS = [
   'It is certain.',
@@ -31,11 +32,11 @@ const cmd: Command<ArgumentType.FullString> = {
   args: { name: 'query', description: 'The question to ask' },
   execute: async (msg, input) => {
     if (!input) {
-      await msg.reply('You have to actually ask something :P');
+      await reply(msg, 'You have to actually ask something :P');
       return;
     }
     const answer = ANSWERS[Math.floor(Math.random() * ANSWERS.length)];
-    await msg.reply(answer);
+    await reply(msg, answer);
   },
 };
 

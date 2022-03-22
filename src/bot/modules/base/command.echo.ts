@@ -1,5 +1,6 @@
 import { ArgumentType, Command } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
+import { reply } from 'util/discord/messages';
 
 const cmd: Command<ArgumentType.FullString> = {
   name: 'echo',
@@ -7,7 +8,7 @@ const cmd: Command<ArgumentType.FullString> = {
   description: 'Echoes the given message',
   args: { name: 'message', description: 'The message to echo' },
   execute: async (msg, input) => {
-    await msg.reply(input);
+    await reply(msg, input);
   },
 };
 

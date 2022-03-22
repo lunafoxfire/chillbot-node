@@ -36,7 +36,7 @@ module.exports = {
         'message': '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
       },
     ],
-    'max-len': [WARN,
+    'max-len': [OFF,
       {
         'code': 140,
         'tabWidth': 2,

@@ -2,6 +2,7 @@ import { ArgumentType, Command } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
 import { getRandomImageURL } from 'services/tenor';
 import { BotError } from 'util/errors';
+import { reply } from 'util/discord/messages';
 
 const cmd: Command<ArgumentType.FullString> = {
   name: 'gif',
@@ -11,7 +12,7 @@ const cmd: Command<ArgumentType.FullString> = {
     let imageUrl;
     try {
       imageUrl = await getRandomImageURL(input);
-    } catch (e) {
+    } catch (e: any) {
       if (e.statusCode === 429) {
         throw new BotError('Tenor rate limit reached :c');
       }
@@ -19,7 +20,7 @@ const cmd: Command<ArgumentType.FullString> = {
     if (!imageUrl) {
       throw new BotError('No suitable image found :c');
     }
-    await msg.reply(imageUrl);
+    await reply(msg, imageUrl);
   },
 };
 

@@ -7,6 +7,7 @@ import { MessageAttachment } from 'discord.js';
 import { ArgumentType, Command } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
 import { ArgumentError, BotError } from 'util/errors';
+import { reply } from 'util/discord/messages';
 
 const NUM_FRAMES = 14;
 const LINE_HEIGHT = 80;
@@ -72,7 +73,7 @@ interface GifData {
 }
 
 const cmd: Command<ArgumentType.FullString> = {
-  name: 'animate',
+  name: 'dance',
   description: 'Turns a message into dancing letters',
   args: { name: 'message', description: 'The message to convert' },
   execute: async (msg, input) => {
@@ -168,8 +169,8 @@ const cmd: Command<ArgumentType.FullString> = {
     }
     encoder.finish();
 
-    const attachment = new MessageAttachment(encoder.out.getData(), 'text.gif');
-    await msg.reply({ files: [attachment] });
+    const attachment = new MessageAttachment(encoder.out.getData(), 'dancin.gif');
+    await reply(msg, { files: [attachment] });
   },
 };
 

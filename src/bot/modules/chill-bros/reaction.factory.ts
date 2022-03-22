@@ -1,16 +1,18 @@
-import { Reaction, DEFAULT_COOLDOWN } from 'bot/types';
+import { Reaction } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
 import { createMultiWordRegex } from 'util/string/regex';
+import { reply } from 'util/discord/messages';
+import { COOLDOWNS } from 'bot/constants';
 
 const regex = createMultiWordRegex(['factorio', 'satisfactory']);
 
 const cmd: Reaction = {
   name: 'factory-mention',
   description: 'Reacts to mentioning factory games',
-  cooldown: DEFAULT_COOLDOWN,
+  cooldown: COOLDOWNS.GLOBAL_LONG,
   test: (msg) => regex.test(msg.content),
   execute: async (msg) => {
-    await msg.reply('THE FACTORY MUST  E X P A N D');
+    await reply(msg, 'THE FACTORY MUST  E X P A N D');
   },
 };
 

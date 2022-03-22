@@ -1,8 +1,10 @@
-import { Reaction, CooldownType } from 'bot/types';
+import { Reaction } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
 import { getRandomImageURL } from 'services/tenor';
 import { createWordRegex } from 'util/string/regex';
 import UserData from 'models/UserData';
+import { reply } from 'util/discord/messages';
+import { COOLDOWNS } from 'bot/constants';
 
 const regex = createWordRegex('anime');
 
@@ -27,7 +29,7 @@ const sparkleCat = `｡･:･ﾟ★     ,｡･:･ﾟ☆
 const cmd: Reaction = {
   name: 'anime-reaction',
   description: 'Reacts to mentioning anime',
-  cooldown: { time: 10, type: CooldownType.PerUser },
+  cooldown: COOLDOWNS.PER_USER_SHORT,
   test: (msg) => regex.test(msg.content),
   execute: async (msg) => {
     let userData;
@@ -50,7 +52,7 @@ const cmd: Reaction = {
         countMessage = `${msg.author} just mentioned anime! I knew they were a weeb! ヽ(≧◡≦)八(o^ ^o)ノ`;
       } else if (anime_count === 69) {
         countMessage = `${msg.author} has mentioned anime ${anime_count} times! Nice.`;
-      } else if (anime_count >= 50 && anime_count % 25 === 0) {
+      } else if (anime_count % 25 === 0) {
         countMessage = `${sparkleCat}\n☆.:‧͙⁺˚･༓☾ ${msg.author} has mentioned anime ${anime_count} times! ☽༓･˚⁺‧͙.:☆`;
       } else if (anime_count % 5 === 0) {
         const emotie = emoties[Math.floor(Math.random() * emoties.length)];
@@ -68,7 +70,7 @@ const cmd: Reaction = {
     }
 
     if (message) {
-      msg.reply(message);
+      await reply(msg, message);
     }
   },
 };

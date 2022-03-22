@@ -8,6 +8,7 @@ import { createPrefixRegex, createMentionPrefixRegex, createCommandRegex } from 
 import Bot from 'bot';
 import { Command, Reaction } from 'bot/types';
 import CooldownHandler from 'bot/components/CooldownHandler';
+import { sendTyping } from 'util/discord/messages';
 
 const DEFAULT_CMD_PREFIX = '!';
 
@@ -128,7 +129,9 @@ export default class MessageHandler {
             logger.verbose(`Executing command: ${command.name}`);
             const argumentText = match[1];
             const args = MessageHandler.parseArgsFromText(command, argumentText);
-            // eslint-disable-next-line no-await-in-loop
+            if (!command.suppressTyping) {
+              await sendTyping(msg);
+            }
             await command.execute(msg, args);
             return true;
           }
@@ -143,7 +146,9 @@ export default class MessageHandler {
       if (reaction.test(msg)) {
         if (CooldownHandler.checkCooldown(msg, reaction, true)) {
           logger.verbose(`Executing reaction: ${reaction.name}`);
-          // eslint-disable-next-line no-await-in-loop
+          if (!reaction.suppressTyping) {
+            await sendTyping(msg);
+          }
           await reaction.execute(msg);
         }
         return true;
@@ -155,9 +160,11 @@ export default class MessageHandler {
   private static async handleError(msg: Message, e: any) {
     if (e.isBotError) {
       if (!e.internalOnly) {
+        await sendTyping(msg);
         await msg.reply(e.message);
       }
     } else if (e.name === 'DiscordAPIError' && e.code === 50035) {
+      await sendTyping(msg);
       await msg.reply('I wanted to say something, but it was way too long...');
     }
   }

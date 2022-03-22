@@ -1,6 +1,7 @@
 import { Message } from 'discord.js';
 import { ArgumentType, Command } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
+import { reply } from 'util/discord/messages';
 
 const cmd: Command<ArgumentType.FullString> = {
   name: 'help',
@@ -13,7 +14,7 @@ const cmd: Command<ArgumentType.FullString> = {
     } else {
       helpText = getAllCommandsHelp(msg);
     }
-    msg.reply(helpText);
+    await reply(msg, helpText);
   },
 };
 

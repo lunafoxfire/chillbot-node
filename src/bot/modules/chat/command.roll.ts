@@ -1,6 +1,7 @@
 import { ArgumentType, Command } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
 import { ArgumentError } from 'util/errors';
+import { reply } from 'util/discord/messages';
 
 const cmd: Command<ArgumentType.FullString> = {
   name: 'roll',
@@ -12,14 +13,14 @@ const cmd: Command<ArgumentType.FullString> = {
     const { grandTotal, resultsString } = evaluateRolls(rollGroups);
 
     if (input === 'd20' && grandTotal === 20) {
-      await msg.reply('=> 20\nWow! Great roll, senpai! ✲ﾟ｡.(✿╹◡╹)ﾉ☆.｡₀:*ﾟ');
+      await reply(msg, '=> 20\nWow! Great roll! ✲ﾟ｡.(✿╹◡╹)ﾉ☆.｡₀:*ﾟ');
       return;
     }
     if (resultsString) {
-      await msg.reply(`=> ${grandTotal}\n\n${resultsString}`);
+      await reply(msg, `=> ${grandTotal}\n\n${resultsString}`);
       return;
     }
-    await msg.reply(`=> ${grandTotal}`);
+    await reply(msg, `=> ${grandTotal}`);
   },
 };
 

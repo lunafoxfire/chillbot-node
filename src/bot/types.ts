@@ -1,6 +1,5 @@
 import { Message, PermissionResolvable } from 'discord.js';
 
-
 // ARGUMENT
 export enum ArgumentType {
   None,
@@ -27,11 +26,6 @@ export interface Cooldown {
   type: CooldownType,
 }
 
-export const DEFAULT_COOLDOWN = {
-  time: 60 * 10,
-  type: CooldownType.Global,
-};
-
 
 // BOT BEHAVIOR
 type ArgDef<ArgType> = ArgType extends ArgumentType.FullString ? Argument
@@ -46,6 +40,7 @@ type ArgVal<ArgType> = ArgType extends ArgumentType.FullString ? string
 export interface BotBehavior {
   name: string,
   description: string,
+  suppressTyping?: boolean,
   execute: Function,
 }
 

@@ -5,6 +5,7 @@ import { parseWaifuKey, getRandomWaifu, getWaifuByParams, WaifuResult } from 'se
 import { BotError, ArgumentError } from 'util/errors';
 import { MessageAttachment } from 'discord.js';
 import { createCanvas, loadImage } from 'canvas';
+import { reply } from 'util/discord/messages';
 
 const CANVAS_SIZE = 800;
 
@@ -38,7 +39,7 @@ const cmd: Command<ArgumentType.FullString> = {
 
     Bot.logger.debug('Uploading waifu...');
     const attachment = new MessageAttachment(canvas.toBuffer(), 'waifu.png');
-    await msg.reply(`||id: \`${waifuData.key}\`||`, { files: [attachment] });
+    await reply(msg, { content: `||id: \`${waifuData.key}\`||`, files: [attachment] });
   },
 };
 

@@ -18,7 +18,7 @@
     "heroku:staging": "set HEROKU_APP=lydian-chill-bot-staging&& heroku"
   },
   "engines": {
-    "node": "v14.15.0"
+    "node": "v16.11.1"
   },
   "dependencies": {
     "axios": "^0.21.4",

@@ -5,6 +5,7 @@ import GifEncoder from 'gifencoder';
 import { MessageAttachment } from 'discord.js';
 import { ArgumentError, BotError } from 'util/errors';
 import { WHITESPACE_REGEX } from 'util/string/regex';
+import { reply } from 'util/discord/messages';
 
 const NUM_FRAMES = 15;
 const TIME = 1000;
@@ -92,7 +93,7 @@ const cmd: Command<ArgumentType.FullString> = {
     encoder.finish();
 
     const attachment = new MessageAttachment(encoder.out.getData(), 'text.gif');
-    await msg.reply({ files: [attachment] });
+    await reply(msg, { files: [attachment] });
   },
 };
 
