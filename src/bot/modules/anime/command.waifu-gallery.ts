@@ -71,7 +71,7 @@ const cmd: Command<ArgumentType.FullString> = {
 
     Bot.logger.debug('Uploading waifu...');
     const attachment = new MessageAttachment(canvas.toBuffer(), 'waifu-poses.png');
-    const msgSendPromise = msg.reply(`||id: \`${waifuData.key}\`||`, { files: [attachment] });
+    const msgSendPromise = msg.reply({ content: `||id: \`${waifuData.key}\`||`, files: [attachment] });
     await msg.react('🇺');
     await msg.react('🇵');
     await msg.react('🇱');

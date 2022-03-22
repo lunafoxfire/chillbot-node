@@ -28,7 +28,7 @@ export interface Cooldown {
 }
 
 export const DEFAULT_COOLDOWN = {
-  time: 120,
+  time: 60 * 10,
   type: CooldownType.Global,
 };
 

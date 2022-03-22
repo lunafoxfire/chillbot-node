@@ -27,7 +27,7 @@ const cmd: Command<ArgumentType.FullString> = {
     }
     const lines = output.split('\n');
     const lenient = process.env.NODE_ENV === 'development'
-      || msg.channel.type === 'dm'
+      || msg.channel.type === 'DM'
       || msg.channel.id === BOT_SPAM_CHANNEL;
     const maxChars = lenient ? MAX_CHARS_LENIENT : MAX_CHARS;
     const maxLines = lenient ? MAX_LINES_LENIENT : MAX_LINES;

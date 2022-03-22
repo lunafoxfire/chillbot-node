@@ -14,7 +14,7 @@ export function safeEval(code: string): EvalResult {
     const result = vm.run(code);
     const text = customInspect(result, 2);
     return { text };
-  } catch (error) {
+  } catch (error: any) {
     return { error };
   }
 }

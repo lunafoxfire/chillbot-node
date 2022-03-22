@@ -1,8 +1,9 @@
 export class BotError extends Error {
   public static NAME = 'BotError';
+  public static defaultMessage = "Oops... I just don't know what went wrong.";
+  public isBotError = true;
   public name = BotError.NAME;
   public internalOnly: boolean = false;
-  public static defaultMessage = "Oops... I just don't know what went wrong.";
   constructor(message?: string, internalOnly?: boolean) {
     super(message || BotError.defaultMessage);
     this.internalOnly = !!internalOnly;
@@ -11,8 +12,8 @@ export class BotError extends Error {
 
 export class ArgumentError extends BotError {
   public static NAME = 'ArgumentError';
-  public name = ArgumentError.NAME;
   public static defaultMessage = "Sorry, I didn't understand that... @_@\nTry checking the command arguments";
+  public name = ArgumentError.NAME;
   constructor(message?: string) {
     super(message || ArgumentError.defaultMessage);
   }
@@ -20,8 +21,8 @@ export class ArgumentError extends BotError {
 
 export class UserPermissionError extends BotError {
   public static NAME = 'UserPermissionError';
-  public name = UserPermissionError.NAME;
   public static defaultMessage = "I can't let you do that c:";
+  public name = UserPermissionError.NAME;
   constructor(message?: string) {
     super(message || UserPermissionError.defaultMessage);
   }
@@ -29,8 +30,8 @@ export class UserPermissionError extends BotError {
 
 export class BotPermissionError extends BotError {
   public static NAME = 'BotPermissionError';
-  public name = BotPermissionError.NAME;
   public static defaultMessage = "I'm not allowed to do that >_>";
+  public name = BotPermissionError.NAME;
   constructor(message?: string) {
     super(message || BotPermissionError.defaultMessage);
   }

@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import Knex from 'knex';
+import { Knex } from 'knex';
 import 'config';
 import DB from 'db';
 

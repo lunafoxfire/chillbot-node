@@ -1,7 +1,8 @@
 import { Message } from 'discord.js';
 import { createLogger } from 'util/logger';
-import { BotError, ArgumentError, UserPermissionError, BotPermissionError } from 'util/errors';
-import { guildIds, userIds } from 'util/constants';
+import { isDMChannel, isGuildTextChannel } from 'util/discord/channels';
+import { guildIds, userIds } from 'util/discord/constants';
+import { BotError, UserPermissionError, BotPermissionError } from 'util/errors';
 import { getMentionString, parseArgList } from 'util/string';
 import { createPrefixRegex, createMentionPrefixRegex, createCommandRegex } from 'util/string/regex';
 import Bot from 'bot';
@@ -29,7 +30,7 @@ export default class MessageHandler {
     MessageHandler.prefixRegex = createPrefixRegex(DEFAULT_CMD_PREFIX);
     if (!Bot.client.user) throw new Error('Bot.client.user somehow doesn\'t exist???');
     MessageHandler.mentionPrefixRegex = createMentionPrefixRegex(getMentionString(Bot.client.user));
-    Bot.client.on('message', MessageHandler.handleMessage);
+    Bot.client.on('messageCreate', MessageHandler.handleMessage);
     logger.info('Ready to listen for commands');
   }
 
@@ -55,7 +56,7 @@ export default class MessageHandler {
 
   public static validateCommandPermissions(msg: Message, command: Command): { valid: Boolean, error: Error | undefined } {
     const { guildOnly, chillBrosOnly, ownerOnly, requireUserPermissions, requireBotPermissions } = command;
-    if (guildOnly && msg.channel.type !== 'text') {
+    if (guildOnly && !isGuildTextChannel(msg.channel)) {
       return {
         valid: false,
         error: new BotError('Sorry that command only works on a server channel'),
@@ -73,17 +74,19 @@ export default class MessageHandler {
         error: new UserPermissionError(),
       };
     }
-    if (requireUserPermissions && msg.member?.permissionsIn(msg.channel).has(requireUserPermissions)) {
-      return {
-        valid: false,
-        error: new UserPermissionError(),
-      };
-    }
-    if (requireBotPermissions && msg.guild?.me?.permissionsIn(msg.channel).has(requireBotPermissions)) {
-      return {
-        valid: false,
-        error: new BotPermissionError(),
-      };
+    if (isGuildTextChannel(msg.channel)) {
+      if (requireUserPermissions && msg.member?.permissionsIn(msg.channel).has(requireUserPermissions)) {
+        return {
+          valid: false,
+          error: new UserPermissionError(),
+        };
+      }
+      if (requireBotPermissions && msg.guild?.me?.permissionsIn(msg.channel).has(requireBotPermissions)) {
+        return {
+          valid: false,
+          error: new BotPermissionError(),
+        };
+      }
     }
     return {
       valid: true,
@@ -116,9 +119,11 @@ export default class MessageHandler {
           if (match) {
             const { valid, error } = MessageHandler.validateCommandPermissions(msg, command);
             if (!valid) {
-              // no
-              // eslint-disable-next-line @typescript-eslint/no-throw-literal
-              throw error;
+              if (error) {
+                throw error;
+              } else {
+                throw new BotError();
+              }
             }
             logger.verbose(`Executing command: ${command.name}`);
             const argumentText = match[1];
@@ -148,12 +153,7 @@ export default class MessageHandler {
   }
 
   private static async handleError(msg: Message, e: any) {
-    if (
-      e.name === BotError.NAME
-      || e.name === ArgumentError.NAME
-      || e.name === UserPermissionError.NAME
-      || e.name === BotPermissionError.NAME
-    ) {
+    if (e.isBotError) {
       if (!e.internalOnly) {
         await msg.reply(e.message);
       }
@@ -173,8 +173,12 @@ export default class MessageHandler {
   }
 
   private static chatLog(msg: Message) {
-    const channelName = msg.channel.type === 'dm' ? 'dm' : `${msg.guild?.name}#${msg.channel.name}`;
-    // const formattedMsg = msg.content.split('\n').join('\n  ');
+    let channelName;
+    if (isGuildTextChannel(msg.channel)) {
+      channelName = `${msg.guild?.name}#${msg.channel.name}`;
+    } else if (isDMChannel(msg.channel)) {
+      channelName = 'dm';
+    }
     chatLogger.silly(`${channelName}@${msg.author.username}: ${msg.content}`);
   }
 }
