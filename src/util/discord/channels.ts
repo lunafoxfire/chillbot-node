@@ -1,4 +1,4 @@
-import { Channel, DMChannel, NewsChannel, PartialDMChannel, TextBasedChannels, TextChannel, ThreadChannel, VoiceChannel } from 'discord.js';
+import { Channel, DMChannel, NewsChannel, PartialDMChannel, TextBasedChannel, TextChannel, ThreadChannel, VoiceChannel } from 'discord.js';
 
 type UnknownTypeChannel = Channel | PartialDMChannel;
 type GuildTextChannel = TextChannel | ThreadChannel | NewsChannel;
@@ -39,7 +39,7 @@ export const VOICE_CHANNEL_TYPES = [
   'GUILD_STAGE_VOICE',
 ];
 
-export function isTextChannel(channel: UnknownTypeChannel): channel is TextBasedChannels {
+export function isTextChannel(channel: UnknownTypeChannel): channel is TextBasedChannel {
   return TEXT_CHANNEL_TYPES.includes(channel.type);
 }
 

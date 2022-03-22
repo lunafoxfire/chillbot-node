@@ -10,25 +10,35 @@ const cmd: Command<ArgumentType.FullString> = {
   execute: async (msg, input) => {
     let helpText: string;
     if (input) {
-      helpText = getSpecificCommandHelp(msg, input);
+      helpText = await getSpecificCommandHelp(msg, input);
     } else {
-      helpText = getAllCommandsHelp(msg);
+      helpText = await getAllCommandsHelp(msg);
     }
     await reply(msg, helpText);
   },
 };
 
-function getAllCommandsHelp(msg: Message): string {
-  const commands = MessageHandler.getRegisteredCommands()
-    .filter(({ command }) => MessageHandler.validateCommandPermissions(msg, command).valid)
-    .sort((a, b) => {
-      if (a.command.name > b.command.name) { return 1; }
-      if (a.command.name < b.command.name) { return -1; }
-      return 0;
-    });
+async function getAllValidCommands(msg: Message): Promise<Command<ArgumentType>[]> {
+  const promises = MessageHandler.getRegisteredCommands().map(async ({ command }) => ({
+    command,
+    valid: (await MessageHandler.validateCommandPermissions(msg, command)).valid,
+  }));
+  const commands = (await Promise.all(promises))
+    .filter(({ command, valid }) => valid && !command.ownerOnly)
+    .map(({ command }) => command);
+  return commands;
+}
+
+async function getAllCommandsHelp(msg: Message): Promise<string> {
+  const commands = await getAllValidCommands(msg);
 
   const helpText = commands
-    .map(({ command }) => {
+    .sort((a, b) => {
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
+      return 0;
+    })
+    .map((command) => {
       let argArray;
       if (command.args) {
         argArray = Array.isArray(command.args) ? command.args : [command.args];
@@ -46,18 +56,19 @@ function getAllCommandsHelp(msg: Message): string {
   return helpText;
 }
 
-function getSpecificCommandHelp(msg: Message, commandName: string): string {
-  const cmdInfo = MessageHandler.getRegisteredCommands()
-    .find(({ command: c }) => c.name === commandName || c.aliases?.find((a) => commandName === a));
-  if (!cmdInfo || !MessageHandler.validateCommandPermissions(msg, cmdInfo.command).valid) {
-    return '';
+async function getSpecificCommandHelp(msg: Message, commandName: string): Promise<string> {
+  const commands = await getAllValidCommands(msg);
+
+  const command = commands.find((c) => c.name === commandName || c.aliases?.find((a) => commandName === a));
+  if (!command) {
+    return 'Command not found';
   }
 
-  const name = `\`${cmdInfo.command.name}\` - ${cmdInfo.command.description}\n`;
-  const aliases = cmdInfo.command.aliases ? `aliases: ${cmdInfo.command.aliases.map((a) => `\`${a}\``).join(', ')}\n` : '';
+  const name = `\`${command.name}\` - ${command.description}\n`;
+  const aliases = command.aliases ? `aliases: ${command.aliases.map((a) => `\`${a}\``).join(', ')}\n` : '';
   let argArray;
-  if (cmdInfo.command.args) {
-    argArray = Array.isArray(cmdInfo.command.args) ? cmdInfo.command.args : [cmdInfo.command.args];
+  if (command.args) {
+    argArray = Array.isArray(command.args) ? command.args : [command.args];
   }
   const args = argArray
     ? `arguments:${argArray.map((arg) => {

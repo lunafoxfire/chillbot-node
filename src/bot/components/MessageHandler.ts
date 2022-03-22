@@ -51,19 +51,37 @@ export default class MessageHandler {
     logger.info(`Registered reaction: ${reaction.name}`);
   }
 
+  public static finalizeCommandRegistration() {
+    MessageHandler.registeredCommands.sort((a, b) => {
+      const aPriority = a.command.priority ?? 0;
+      const bPriority = b.command.priority ?? 0;
+      if (aPriority > bPriority) return -1;
+      if (aPriority < bPriority) return 1;
+      return 0;
+    });
+
+    MessageHandler.registeredReactions.sort((a, b) => {
+      const aPriority = a.priority ?? 0;
+      const bPriority = b.priority ?? 0;
+      if (aPriority > bPriority) return -1;
+      if (aPriority < bPriority) return 1;
+      return 0;
+    });
+  }
+
   public static getRegisteredCommands() {
     return MessageHandler.registeredCommands;
   }
 
-  public static validateCommandPermissions(msg: Message, command: Command): { valid: Boolean, error: Error | undefined } {
-    const { guildOnly, chillBrosOnly, ownerOnly, requireUserPermissions, requireBotPermissions } = command;
+  public static async validateCommandPermissions(msg: Message, command: Command): Promise<{ valid: Boolean, error: Error | undefined }> {
+    const { guildOnly, chillBrosOnly, ownerOnly, requireUserPermissions, requireBotPermissions, requireUserRole, requireBotRole } = command;
     if (guildOnly && !isGuildTextChannel(msg.channel)) {
       return {
         valid: false,
         error: new BotError('Sorry that command only works on a server channel'),
       };
     }
-    if (chillBrosOnly && msg.guild?.id !== guildIds.ChillBros) {
+    if (chillBrosOnly && !(msg.guild?.id === guildIds.ChillBros)) {
       return {
         valid: false,
         error: new BotError('This command only works on the Chill Bros server'),
@@ -76,17 +94,37 @@ export default class MessageHandler {
       };
     }
     if (isGuildTextChannel(msg.channel)) {
-      if (requireUserPermissions && msg.member?.permissionsIn(msg.channel).has(requireUserPermissions)) {
+      if (requireUserPermissions && !msg.member?.permissionsIn(msg.channel).has(requireUserPermissions)) {
         return {
           valid: false,
           error: new UserPermissionError(),
         };
       }
-      if (requireBotPermissions && msg.guild?.me?.permissionsIn(msg.channel).has(requireBotPermissions)) {
+      if (requireBotPermissions && !msg.guild?.me?.permissionsIn(msg.channel).has(requireBotPermissions)) {
         return {
           valid: false,
           error: new BotPermissionError(),
         };
+      }
+      if (requireUserRole) {
+        const requiredRole = await msg.guild?.roles.fetch(requireUserRole);
+        const userRole = msg.member?.roles.highest;
+        if (requireUserRole && (!requiredRole || !userRole || requiredRole.position > userRole.position)) {
+          return {
+            valid: false,
+            error: new UserPermissionError(),
+          };
+        }
+      }
+      if (requireBotRole) {
+        const requiredRole = await msg.guild?.roles.fetch(requireBotRole);
+        const botRole = msg.guild?.me?.roles.highest;
+        if (requireUserRole && (!requiredRole || !botRole || requiredRole.position > botRole.position)) {
+          return {
+            valid: false,
+            error: new BotPermissionError(),
+          };
+        }
       }
     }
     return {
@@ -118,7 +156,7 @@ export default class MessageHandler {
         for (const keyword of keywords) {
           match = commandText.match(keyword.regex);
           if (match) {
-            const { valid, error } = MessageHandler.validateCommandPermissions(msg, command);
+            const { valid, error } = await MessageHandler.validateCommandPermissions(msg, command);
             if (!valid) {
               if (error) {
                 throw error;
@@ -162,11 +200,12 @@ export default class MessageHandler {
       if (!e.internalOnly) {
         await sendTyping(msg);
         await msg.reply(e.message);
+        return;
       }
-    } else if (e.name === 'DiscordAPIError' && e.code === 50035) {
-      await sendTyping(msg);
-      await msg.reply('I wanted to say something, but it was way too long...');
     }
+    logger.error(e);
+    await sendTyping(msg);
+    await msg.reply(BotError.defaultMessage);
   }
 
   private static parseArgsFromText(command: Command, argumentText: string): string | string[] | undefined {

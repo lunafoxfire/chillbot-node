@@ -21,7 +21,7 @@ export class ArgumentError extends BotError {
 
 export class UserPermissionError extends BotError {
   public static NAME = 'UserPermissionError';
-  public static defaultMessage = "I can't let you do that c:";
+  public static defaultMessage = "You aren't allowed to do that :c";
   public name = UserPermissionError.NAME;
   constructor(message?: string) {
     super(message || UserPermissionError.defaultMessage);

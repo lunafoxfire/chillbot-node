@@ -3,13 +3,13 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.table('user_data', (table) => {
-    table.jsonb('inventory').defaultTo('[]');
+    table.string('unique_role').nullable();
   });
 }
 
 
 export async function down(knex: Knex): Promise<void> {
   await knex.schema.table('user_data', (table) => {
-    table.dropColumn('inventory');
+    table.dropColumn('unique_role');
   });
 }

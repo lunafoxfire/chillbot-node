@@ -40,6 +40,7 @@ type ArgVal<ArgType> = ArgType extends ArgumentType.FullString ? string
 export interface BotBehavior {
   name: string,
   description: string,
+  priority?: number,
   suppressTyping?: boolean,
   execute: Function,
 }
@@ -52,6 +53,8 @@ export interface Command<ArgType = ArgumentType.None | ArgumentType.FullString |
   ownerOnly?: boolean,
   requireUserPermissions?: PermissionResolvable,
   requireBotPermissions?: PermissionResolvable,
+  requireUserRole?: string,
+  requireBotRole?: string,
   execute: (msg: Message, args: ArgVal<ArgType>) => Promise<void>,
 }
 

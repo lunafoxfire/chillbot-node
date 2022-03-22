@@ -57,5 +57,6 @@ export default class Bot {
   private static async importCommands() {
     const files = glob.sync(`${path.join(__dirname, MODULES_DIR)}/**/*.ts`);
     await Promise.all(files.map((file) => import(file)));
+    MessageHandler.finalizeCommandRegistration();
   }
 }
