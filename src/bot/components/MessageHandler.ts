@@ -182,12 +182,16 @@ export default class MessageHandler {
   private static async handleAsReaction(msg: Message): Promise<boolean> {
     for (const reaction of MessageHandler.registeredReactions) {
       if (reaction.test(msg)) {
-        if (CooldownHandler.checkCooldown(msg, reaction, true)) {
-          logger.verbose(`Executing reaction: ${reaction.name}`);
-          if (!reaction.suppressTyping) {
-            await sendTyping(msg);
+        if ((reaction.probability == null) || (Math.random() < reaction.probability)) {
+          if (CooldownHandler.checkCooldown(msg, reaction, true)) {
+            logger.verbose(`Executing reaction: ${reaction.name}`);
+            if (!reaction.suppressTyping) {
+              await sendTyping(msg);
+            }
+            await reaction.execute(msg);
           }
-          await reaction.execute(msg);
+        } else {
+          logger.debug(`Reaction rejected: ${reaction.name}. Failed probability check.`);
         }
         return true;
       }

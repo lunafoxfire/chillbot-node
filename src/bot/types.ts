@@ -60,6 +60,7 @@ export interface Command<ArgType = ArgumentType.None | ArgumentType.FullString |
 
 export interface Reaction extends BotBehavior {
   cooldown?: Cooldown,
+  probability?: number,
   test: (msg: Message) => boolean,
   execute: (msg: Message) => Promise<void>,
 }

@@ -1,19 +1,18 @@
 import { Reaction } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
-import { createMultiWordRegex } from 'util/string/regex';
 import { reply } from 'util/discord/messages';
 import { COOLDOWNS, PROBABILITIES } from 'bot/constants';
 
-const regex = createMultiWordRegex(['taco bell', 'taco baco']);
+const regex = /(?:^|\\W)(ya+y!+)(?:$|\\W)/i;
 
 const cmd: Reaction = {
-  name: 'taco-baco',
-  description: 'Reaction to mentioning taco bell',
+  name: 'yay',
+  description: 'Reaction to someone saying yay',
   cooldown: COOLDOWNS.GLOBAL_STANDARD,
   probability: PROBABILITIES.STANDARD,
   test: (msg) => regex.test(msg.content),
   execute: async (msg) => {
-    await reply(msg, 'https://i.kym-cdn.com/photos/images/original/001/269/888/59a.jpg\nTaco Baco?');
+    await reply(msg, 'https://cdn.discordapp.com/attachments/958649870443503646/958649902936768552/dancin.gif\nYay!');
   },
 };
 

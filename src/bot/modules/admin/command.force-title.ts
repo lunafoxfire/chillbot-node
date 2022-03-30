@@ -26,16 +26,6 @@ const cmd: Command<ArgumentType.ArgumentList> = {
     if (!guildUser) throw new ArgumentError('Invalid user id');
     if (!role) throw new ArgumentError('Invalid role id');
 
-    const { unique_role: existingRoleId } = await UserData.findOrCreate({ user_id: guildUser.id, guild_id: guild.id });
-
-    if (existingRoleId) {
-      const existingRole = await guild.roles.fetch(existingRoleId);
-      if (existingRole) {
-        await reply(msg, `User already has a title. Name: ${existingRole.name} | Id: ${existingRole.id}`);
-        return;
-      }
-    }
-
     await UserData.setUniqueRole({ user_id: guildUser.id, guild_id: guild.id }, role.id);
     await reply(msg, `User ${guildUser.displayName} now has title ${role.name}`);
   },

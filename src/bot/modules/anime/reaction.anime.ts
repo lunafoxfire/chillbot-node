@@ -4,7 +4,7 @@ import { getRandomImageURL } from 'services/tenor';
 import { createWordRegex } from 'util/string/regex';
 import UserData from 'models/UserData';
 import { reply } from 'util/discord/messages';
-import { COOLDOWNS } from 'bot/constants';
+import { COOLDOWNS, PROBABILITIES } from 'bot/constants';
 
 const regex = createWordRegex('anime');
 
@@ -30,6 +30,7 @@ const cmd: Reaction = {
   name: 'anime-reaction',
   description: 'Reacts to mentioning anime',
   cooldown: COOLDOWNS.PER_USER_SHORT,
+  probability: PROBABILITIES.ALWAYS,
   test: (msg) => regex.test(msg.content),
   execute: async (msg) => {
     let userData;
