@@ -3,13 +3,9 @@ import MessageHandler from 'bot/components/MessageHandler';
 import { createMultiWordRegex } from 'util/string/regex';
 import { Message } from 'discord.js';
 import { COOLDOWNS, PROBABILITIES } from 'bot/constants';
-// import { reply, sendTyping } from 'util/discord/messages';
+import { emojiIds } from 'util/discord/constants';
 
-const badWords = [
-  'bitch',
-  'bitches',
-  'bitchy',
-  'bullshit',
+const fucks = [
   'fuck',
   'fucked',
   'fucker',
@@ -19,62 +15,64 @@ const badWords = [
   'motherfucker',
   'motherfuckin',
   'motherfucking',
+];
+
+const shits = [
   'shit',
   'shits',
   'shitting',
   'shitty',
+  'bullshit',
 ];
 
-const regex = createMultiWordRegex(badWords);
-
-const handlers: ((msg: Message) => Promise<void>)[] = [
-  // async (msg) => {
-  //   await sendTyping(msg);
-  //   await reply(msg, 'Don\'t fucking swear on my fucking server goddammit');
-  // },
-  async (msg) => {
-    await msg.react('😰');
-    await msg.react('🇦');
-    await msg.react('🇳');
-    await msg.react('🇬');
-    await msg.react('🇪');
-    await msg.react('🇷');
-    await msg.react('🇾');
-  },
-  async (msg) => {
-    await msg.react('❌');
-    await msg.react('🇧');
-    await msg.react('🇦');
-    await msg.react('🇩');
-  },
-  async (msg) => {
-    await msg.react('🤬');
-  },
-  async (msg) => {
-    await Promise.all([
-      msg.react('🌶️'),
-      msg.react('🔥'),
-      msg.react('💥'),
-      msg.react('👺'),
-      msg.react('🖕'),
-      msg.react('⚡'),
-      msg.react('💩'),
-      msg.react('⁉️'),
-      msg.react('‼️'),
-    ]);
-  },
+const asses = [
+  'ass',
+  'asses',
 ];
 
-const cmd: Reaction = {
-  name: 'swear-detector',
-  description: 'Reacts to swear words',
+const fuckRegex = createMultiWordRegex(fucks);
+const shitRegex = createMultiWordRegex(shits);
+const assRegex = createMultiWordRegex(asses);
+
+const fuckCmd: Reaction = {
+  name: 'fuck-detector',
+  description: 'Reacts to fucks',
   suppressTyping: true,
   cooldown: COOLDOWNS.GLOBAL_STANDARD,
   probability: PROBABILITIES.ALWAYS,
-  test: (msg) => regex.test(msg.content),
+  test: (msg) => fuckRegex.test(msg.content),
   execute: async (msg) => {
-    await handlers[Math.floor(Math.random() * handlers.length)](msg);
+    await msg.react('❌');
+    await msg.react('🇫');
+    await msg.react('🇺');
+    await msg.react('🇨');
+    await msg.react('🇰');
   },
 };
+MessageHandler.registerReaction(fuckCmd);
 
-MessageHandler.registerReaction(cmd);
+const shitCmd: Reaction = {
+  name: 'shit-detector',
+  description: 'Reacts to shits',
+  suppressTyping: true,
+  cooldown: COOLDOWNS.GLOBAL_STANDARD,
+  probability: PROBABILITIES.ALWAYS,
+  test: (msg) => shitRegex.test(msg.content),
+  execute: async (msg) => {
+    await msg.react('💩');
+  },
+};
+MessageHandler.registerReaction(shitCmd);
+
+const assCmd: Reaction = {
+  name: 'ass-detector',
+  description: 'Reacts to asses',
+  suppressTyping: true,
+  cooldown: COOLDOWNS.GLOBAL_STANDARD,
+  probability: PROBABILITIES.ALWAYS,
+  test: (msg) => assRegex.test(msg.content),
+  execute: async (msg) => {
+    await msg.react(emojiIds.Butt);
+  },
+};
+MessageHandler.registerReaction(assCmd);

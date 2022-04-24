@@ -15,14 +15,15 @@ export const roleIds = {
 };
 
 export const channelIds = {
-  ArcaneContainmentField: '606703714027175936',
+  BotSpam: '955950801157779477',
 };
 
 export const emojiIds = {
   CoffeeCat: '<:coffeecat:673288186960805889>',
+  Butt: '<:butt:712579657479880755>',
 };
 
 // TODO: add this to guild config
 export const botSpamChannels = [
-  channelIds.ArcaneContainmentField,
+  channelIds.BotSpam,
 ];
