@@ -2,7 +2,7 @@ import Bot from 'bot';
 import { Message } from 'discord.js';
 import { Configuration, OpenAIApi } from 'openai';
 
-const PROMPT_PREFIX = 'The following is a Discord conversation with an AI personality named %b. %b is funny, creative, clever, and friendly. The conversation involves %b and %u. %b has the last entry in the conversation.';
+const PROMPT_PREFIX = 'The following is a casual Discord conversation with an AI personality named %b. %b is funny, creative, friendly, and a bit of a prankster. Not only that, but %b is completely indistinguishable from a human. The conversation involves %b and %u. %b has the last entry in the conversation.';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
