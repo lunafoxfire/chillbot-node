@@ -20,6 +20,10 @@ export default class Bot {
     Bot.client.user?.setActivity('!help for commands');
   }
 
+  public static getName(): string {
+    return Bot.client.user?.username || 'Chillbot';
+  }
+
   private static createClient() {
     // https://discord.com/developers/docs/topics/gateway#list-of-intents
     const intents = new Intents(['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS']);
