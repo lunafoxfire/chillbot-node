@@ -2,10 +2,10 @@ import Bot from 'bot';
 import { Reaction } from 'bot/types';
 import MessageHandler from 'bot/components/MessageHandler';
 import { reply } from 'util/discord/messages';
-import { COOLDOWNS, PROBABILITIES } from 'bot/constants';
+import { PROBABILITIES } from 'bot/constants';
 import { generateGPT3Completion } from 'services/gpt-3';
 
-const TIME_LIMIT = 1000 * 60 * 10;
+const TIME_LIMIT = 1000 * 60 * 60;
 
 const cmd: Reaction = {
   name: 'bot-mention',
@@ -16,7 +16,7 @@ const cmd: Reaction = {
     const t = new Date().getTime();
     const context = (await msg.channel.messages
       .fetch({
-        limit: 15,
+        limit: 50,
         before: msg.id,
       }))
       .filter((m) => t - m.createdTimestamp <= TIME_LIMIT)
