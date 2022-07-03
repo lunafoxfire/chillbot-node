@@ -22,7 +22,7 @@ export async function generateGPT3Completion(context: Message[]): Promise<string
   logger.debug(`==== PROMPT ====\n${prompt}`);
 
   const response = await openai.createCompletion({
-    model: 'text-davinci-002',
+    model: 'text-curie-001',
     prompt,
     temperature: 0.9,
     max_tokens: 150,
