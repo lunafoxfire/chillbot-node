@@ -25,7 +25,9 @@ const cmd: Reaction = {
     contextArr.push(msg);
 
     const response = await generateGPT3Completion(contextArr);
-    await reply(msg, response);
+    if (response) {
+      await reply(msg, response);
+    }
   },
 };
 

@@ -66,5 +66,6 @@ module.exports = {
     'no-undef': OFF,
     'node/no-missing-import': OFF,
     'node/no-unsupported-features/es-syntax': OFF,
+    'for-direction': OFF,
   },
 };
