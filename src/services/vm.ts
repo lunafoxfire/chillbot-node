@@ -19,10 +19,10 @@ export function safeEval(code: string): EvalResult {
   }
 }
 
-interface EvalResult {
+type EvalResult = {
   text?: string,
   error?: Error,
-}
+};
 
 function customInspect(obj: any, depth: number): string {
   if (typeof obj === 'string' || typeof obj === 'number') {

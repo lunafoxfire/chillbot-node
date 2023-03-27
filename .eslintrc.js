@@ -1,71 +1,47 @@
+/* eslint-disable no-unused-vars */
 const OFF = 0;
 const WARN = 1;
 const ERROR = 2;
 
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: [
-    '@typescript-eslint',
-  ],
+  plugins: [],
   extends: [
-    'plugin:node/recommended',
-    'airbnb-typescript/base',
+    'standard-with-typescript',
   ],
   parserOptions: {
+    ecmaVersion: 'latest',
+    // sourceType: 'module',
     project: './tsconfig.eslint.json',
   },
   rules: {
-    'linebreak-style': OFF,
-    'class-methods-use-this': OFF,
-    'import/prefer-default-export': OFF,
-    'no-multiple-empty-lines': [ERROR, { max: 2 }],
-    '@typescript-eslint/lines-between-class-members': OFF,
-    'max-classes-per-file': OFF,
-    'no-restricted-syntax': [ERROR,
-      {
-        'selector': 'ForInStatement',
-        'message': 'for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array.',
-      },
-      {
-        'selector': 'LabeledStatement',
-        'message': 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.',
-      },
-      {
-        'selector': 'WithStatement',
-        'message': '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
-      },
-    ],
-    'max-len': [OFF,
-      {
-        'code': 140,
-        'tabWidth': 2,
-        'ignoreUrls': true,
-        'ignoreStrings': true,
-        'ignoreTemplateLiterals': true,
-        'ignoreRegExpLiterals': true,
-      },
-    ],
-    'object-curly-newline': OFF,
-    'no-plusplus': OFF,
-    'no-undef-init': OFF,
-    '@typescript-eslint/no-use-before-define': [ERROR,
-      {
-        'functions': false,
-      },
-    ],
-    'no-async-promise-executor': OFF,
-    'no-await-in-loop': OFF,
-    'no-irregular-whitespace': OFF,
-    '@typescript-eslint/naming-convention': OFF,
+    'semi': [ERROR, 'always'],
+    'comma-dangle': OFF,
     'quote-props': OFF,
-    '@typescript-eslint/no-unused-vars': OFF,
-    'no-continue': OFF,
+    'no-multiple-empty-lines': OFF,
+    'no-empty-pattern': OFF,
+    'operator-linebreak': [ERROR, 'before'],
+    'multiline-ternary': OFF,
 
-    // Typescript handles these
-    'no-undef': OFF,
-    'node/no-missing-import': OFF,
-    'node/no-unsupported-features/es-syntax': OFF,
-    'for-direction': OFF,
+    '@typescript-eslint/semi': [ERROR, 'always'],
+    '@typescript-eslint/comma-dangle': [ERROR, 'always-multiline'],
+    '@typescript-eslint/naming-convention': OFF,
+    '@typescript-eslint/space-before-function-paren': OFF,
+    '@typescript-eslint/explicit-function-return-type': OFF,
+    '@typescript-eslint/consistent-type-definitions': [ERROR, 'type'],
+    '@typescript-eslint/member-delimiter-style': [ERROR, {
+      multiline: { delimiter: 'comma', requireLast: true },
+      singleline: { delimiter: 'comma', requireLast: false },
+    }],
+    '@typescript-eslint/no-empty-interface': OFF,
+    '@typescript-eslint/strict-boolean-expressions': OFF,
+    '@typescript-eslint/prefer-nullish-coalescing': OFF,
+    '@typescript-eslint/restrict-template-expressions': OFF,
+    '@typescript-eslint/no-non-null-assertion': OFF,
+    '@typescript-eslint/dot-notation': OFF,
+    '@typescript-eslint/no-extraneous-class': OFF,
+    '@typescript-eslint/return-await': OFF,
+    '@typescript-eslint/array-type': OFF,
+    '@typescript-eslint/restrict-plus-operands': [ERROR, { allowAny: true }],
   },
 };

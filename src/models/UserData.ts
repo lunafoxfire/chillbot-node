@@ -1,18 +1,18 @@
 import DB from 'db';
 
-interface UserDataSelector {
-  user_id: string;
-  guild_id: string;
-}
+type UserDataSelector = {
+  user_id: string,
+  guild_id: string,
+};
 
-interface UserTableData {
+type UserTableData = {
   id: number,
   user_id: string,
   guild_id: string,
   doot_dollars: number,
   anime_count: number,
   unique_role: string | null,
-}
+};
 
 // TODO: One day, add returned columns as a param :p
 export default class UserData {

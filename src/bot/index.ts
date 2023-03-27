@@ -1,44 +1,53 @@
-import { Client, ClientOptions, Intents } from 'discord.js';
-import path from 'path';
-import glob from 'glob';
+import { Client, Events, GatewayIntentBits, Partials, REST } from 'discord.js';
+import { isDev } from 'util/env';
 import { createLogger } from 'util/logger';
 import { borderedText } from 'util/string/decoration';
-import MessageHandler from './components/MessageHandler';
-
-const MODULES_DIR = './modules';
+import AdminCommandHandler from 'bot/admin-commands/AdminCommandHandler';
+import SlashCommandHandler from 'bot/slash-commands/SlashCommandHandler';
+import ReactionHandler from 'bot/reactions/ReactionHandler';
 
 export default class Bot {
-  public static client: Client;
+  public static client: Client = this.createClient();
+  public static restAPI = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN || '');
   public static logger = createLogger('bot');
+  public static isDev = isDev;
 
   public static async init() {
-    await Bot.importCommands();
-    Bot.createClient();
-    await Bot.login();
-    MessageHandler.init();
-    Bot.showStartupMessage();
-    Bot.client.user?.setActivity('!help for commands');
+    await AdminCommandHandler.init();
+    await SlashCommandHandler.init();
+    await ReactionHandler.init();
+    await self.login();
+    self.showStartupMessage();
+    self.client.user?.setActivity('slash commands!');
   }
 
   public static getName(): string {
-    return Bot.client.user?.username || 'Chillbot';
+    return self.client.user?.username || 'Chillbot';
   }
 
-  private static createClient() {
+  private static createClient(): Client {
     // https://discord.com/developers/docs/topics/gateway#list-of-intents
-    const intents = new Intents(['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS']);
-    const options: ClientOptions = {
-      intents,
-      partials: ['CHANNEL'],
-    };
-    Bot.client = new Client(options);
+    return new Client({
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.DirectMessageReactions,
+      ],
+      partials: [
+        Partials.Channel,
+      ],
+    });
   }
 
   private static async login() {
+    self.logger.info('Logging in...');
     return new Promise<void>((resolve, reject) => {
-      Bot.client.login(process.env.BOT_TOKEN)
-        .catch((e) => reject(e));
-      Bot.client.on('ready', () => resolve());
+      self.client.login(process.env.BOT_TOKEN)
+        .catch((e) => { reject(e); });
+      self.client.on(Events.ClientReady, () => { resolve(); });
     });
   }
 
@@ -49,18 +58,14 @@ export default class Bot {
     ], '=');
     const readyMessageLines = [
       initMessage,
-      `Logged in as ${Bot.client.user?.tag}!`,
+      `Logged in as ${self.client.user?.tag}!`,
       'Connected to the following servers:',
     ];
-    Bot.client.guilds.cache.forEach((guild) => {
+    self.client.guilds.cache.forEach((guild) => {
       readyMessageLines.push(`  ${guild.name}`);
     });
-    Bot.logger.info(`\n${readyMessageLines.join('\n')}\n`);
-  }
-
-  private static async importCommands() {
-    const files = glob.sync(`${path.join(__dirname, MODULES_DIR)}/**/*.ts`);
-    await Promise.all(files.map((file) => import(file)));
-    MessageHandler.finalizeCommandRegistration();
+    self.logger.info(`\n${readyMessageLines.join('\n')}\n`);
   }
 }
+
+const self = Bot;

@@ -1,12 +1,21 @@
 export class BotError extends Error {
   public static NAME = 'BotError';
-  public static defaultMessage = "Oops... I just don't know what went wrong.";
+  public static defaultMessage = 'Oops... Something went wrong.';
   public isBotError = true;
   public name = BotError.NAME;
   public internalOnly: boolean = false;
-  constructor(message?: string, internalOnly?: boolean) {
+  constructor(message?: string) {
     super(message || BotError.defaultMessage);
-    this.internalOnly = !!internalOnly;
+  }
+}
+
+export class InternalError extends BotError {
+  public static NAME = 'InternalError';
+  public static defaultMessage = BotError.defaultMessage;
+  public name = InternalError.NAME;
+  constructor(message?: string) {
+    super(message || InternalError.defaultMessage);
+    this.internalOnly = true;
   }
 }
 

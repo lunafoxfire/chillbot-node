@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 import 'config';
 import DB from 'db';
 
@@ -11,7 +11,7 @@ const EXCLUDE = [
   'knex_migrations_lock',
 ];
 
-DB.init()
+void DB.init()
   .then(async () => {
     const result = await DB.knex.raw("SELECT tablename FROM pg_tables WHERE schemaname='public';");
     const schema: any = {};
@@ -20,7 +20,7 @@ DB.init()
       if (EXCLUDE.includes(tablename)) return;
       const promise = DB.knex.raw(`SELECT * FROM ${tablename} WHERE false;`);
       promises.push(promise);
-      promise.then(({ fields }) => {
+      void promise.then(({ fields }) => {
         schema[tablename] = fields.map((field: any) => field.name);
       });
     });

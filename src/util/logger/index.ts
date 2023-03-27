@@ -1,9 +1,9 @@
 import { dateTime } from 'util/date-time/formats';
 
-interface LogLevel {
+type LogLevel = {
   key: string,
   priority: number,
-}
+};
 
 const LogLevels = {
   NONE: { key: 'NONE', priority: -1 },
@@ -15,7 +15,7 @@ const LogLevels = {
   SILLY: { key: 'SILLY', priority: 5 },
 };
 
-const envLogLevelDefaults: { [id: string]: LogLevel } = {
+const envLogLevelDefaults: Record<string, LogLevel> = {
   development: LogLevels.DEBUG,
   test: LogLevels.ERROR,
 };
@@ -27,7 +27,7 @@ const envLogLevel = Object.values(LogLevels).find(({ key }) => process.env.LOG_L
 class Logger {
   public static globalLogLevel: LogLevel = envLogLevel || envDefaultLogLevel;
 
-  private label: string | undefined;
+  private readonly label: string | undefined;
 
   constructor(label?: string) {
     this.label = label;

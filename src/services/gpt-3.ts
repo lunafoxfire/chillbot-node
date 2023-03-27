@@ -1,5 +1,5 @@
 import Bot from 'bot';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 import { Configuration, OpenAIApi } from 'openai';
 import { createLogger } from 'util/logger';
 

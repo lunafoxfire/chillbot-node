@@ -1,4 +1,4 @@
-import knexConfig, { Knex } from 'knex';
+import knexConfig, { type Knex } from 'knex';
 import { createLogger } from 'util/logger';
 import { isTruthy } from 'util/string';
 import { knexSettings } from '../../knexfile';

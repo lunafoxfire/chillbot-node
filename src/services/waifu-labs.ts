@@ -5,21 +5,22 @@ const IMAGES_PER_GALLERY = 16;
 
 const waifuKeyRegex = /^\s*g:(\d+|\?)\|c:(\d+|\?)\|p:(\d+|\?)\s*$/i;
 
-export interface WaifuParams {
+export type WaifuParams = {
   girl: number,
   color: number,
   pose: number,
-}
+};
 
-export interface WaifuResult {
+export type WaifuResult = {
   key: string,
   url: string,
-}
-export interface WaifuGalleryResult {
+};
+
+export type WaifuGalleryResult = {
   key: string,
   urls: string[],
   poses: number[],
-}
+};
 
 export async function getRandomWaifu(): Promise<WaifuResult> {
   const params = getRandomWaifuParams();
@@ -71,7 +72,7 @@ export async function getPoseGallery(params: WaifuParams, numPoses: number): Pro
     promises.push(request);
     // Is this jank? I feel like this might be jank...
     // eslint-disable-next-line @typescript-eslint/no-loop-func
-    request.then(({ data }) => {
+    void request.then(({ data }) => {
       data.newGirls.forEach(({ image, seeds }: any) => {
         const newParams = extractWaifuParams(seeds);
         poses.push(newParams.pose);

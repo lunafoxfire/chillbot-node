@@ -2,7 +2,7 @@ import 'config';
 import DB from 'db';
 import Bot from 'bot';
 
-(async () => {
+void (async () => {
   try {
     await DB.init();
     await Bot.init();
