@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@types/gifencoder": "^2.0.1",
-    "@types/glob": "^7.2.3",
+    "@types/glob": "^7.2.0",
     "@types/node": "^16.11.1",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "eslint": "^8.23.1",
