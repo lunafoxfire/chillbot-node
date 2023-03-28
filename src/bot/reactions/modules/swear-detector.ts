@@ -47,7 +47,6 @@ const fuckCmd: Reaction = {
     await msg.react("🇰");
   },
 };
-ReactionHandler.register(fuckCmd);
 
 const shitCmd: Reaction = {
   name: "shit-detector",
@@ -59,7 +58,6 @@ const shitCmd: Reaction = {
     await msg.react("💩");
   },
 };
-ReactionHandler.register(shitCmd);
 
 const assCmd: Reaction = {
   name: "ass-detector",
@@ -71,4 +69,7 @@ const assCmd: Reaction = {
     await msg.react(emojiIds.Butt);
   },
 };
+
+ReactionHandler.register(fuckCmd);
+ReactionHandler.register(shitCmd);
 ReactionHandler.register(assCmd);

@@ -35,6 +35,7 @@ export default class Bot {
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.MessageContent,
       ],
       partials: [
         Partials.Channel,

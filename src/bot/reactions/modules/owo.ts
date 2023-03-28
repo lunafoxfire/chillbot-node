@@ -3,16 +3,52 @@ import ReactionHandler from "../ReactionHandler";
 import { COOLDOWNS, PROBABILITIES } from "../constants";
 import { createMultiWordRegex } from "util/string/regex";
 
-const regex = createMultiWordRegex(["owo", "0w0"]);
+const owoRegex = createMultiWordRegex(["owo", "0w0"]);
+const uwuRegex = createMultiWordRegex(["uwu", "nwn", "u_u", "n_n", "u-u", "n-n"]);
+const whatsThisRegex = createMultiWordRegex(["what's this", "whats this", "what is this"]);
+const whatsThatRegex = createMultiWordRegex(["what's that", "whats that", "what is that"]);
 
-const cmd: Reaction = {
+const owoCmd: Reaction = {
   name: "owo",
   cooldown: COOLDOWNS.LONG,
   probability: PROBABILITIES.ALWAYS,
-  test: (msg) => regex.test(msg.content),
+  test: (msg) => owoRegex.test(msg.content),
   execute: async (msg) => {
-    await msg.reply("OwO What's this?");
+    await msg.reply("OwO what's this?");
   },
 };
 
-ReactionHandler.register(cmd);
+const uwuCmd: Reaction = {
+  name: "uwu",
+  cooldown: COOLDOWNS.LONG,
+  probability: PROBABILITIES.ALWAYS,
+  test: (msg) => uwuRegex.test(msg.content),
+  execute: async (msg) => {
+    await msg.reply("UwU");
+  },
+};
+
+const whatsThisCmd: Reaction = {
+  name: "whats-this",
+  cooldown: COOLDOWNS.LONG,
+  probability: PROBABILITIES.ALWAYS,
+  test: (msg) => whatsThisRegex.test(msg.content),
+  execute: async (msg) => {
+    await msg.reply("OwO what's this?");
+  },
+};
+
+const whatsThatCmd: Reaction = {
+  name: "whats-that",
+  cooldown: COOLDOWNS.LONG,
+  probability: PROBABILITIES.ALWAYS,
+  test: (msg) => whatsThatRegex.test(msg.content),
+  execute: async (msg) => {
+    await msg.reply("OwO what's that?");
+  },
+};
+
+ReactionHandler.register(owoCmd);
+ReactionHandler.register(uwuCmd);
+ReactionHandler.register(whatsThisCmd);
+ReactionHandler.register(whatsThatCmd);

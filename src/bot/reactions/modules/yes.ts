@@ -2,7 +2,7 @@ import type { Reaction } from "bot/types";
 import ReactionHandler from "../ReactionHandler";
 import { COOLDOWNS, PROBABILITIES } from "../constants";
 
-const regex = /^(?:(?:yes)|(?:yea+h*))[.!]*$/i;
+const regex = /^(?:yes+)[.!]*$/i;
 
 const cmd: Reaction = {
   name: "yes",
