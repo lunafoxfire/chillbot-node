@@ -1,22 +1,22 @@
 /* eslint-disable no-irregular-whitespace */
-import type { Reaction } from 'bot/types';
-import ReactionHandler from '../ReactionHandler';
-import { COOLDOWNS, PROBABILITIES } from '../constants';
-import { createWordRegex } from 'util/string/regex';
-import UserData from 'models/UserData';
-import { getRandomImageURL } from 'services/tenor';
-import { InternalError } from 'util/errors';
+import type { Reaction } from "bot/types";
+import ReactionHandler from "../ReactionHandler";
+import { COOLDOWNS, PROBABILITIES } from "../constants";
+import { createWordRegex } from "util/string/regex";
+import UserData from "models/UserData";
+import { getRandomImageURL } from "services/tenor";
+import { InternalError } from "util/errors";
 
-const regex = createWordRegex('anime');
+const regex = createWordRegex("anime");
 
 const emoties = [
-  'ヽ(≧◡≦)八(o^ ^o)ノ',
-  'o(>ω<)o',
-  '｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡',
-  'σ(￣、￣〃)',
-  '(づ◡﹏◡)づ',
-  'ಥ﹏ಥ',
-  '(ﾉ>ω<)ﾉ :｡･:*:･ﾟ’★,｡･:*:･ﾟ’☆',
+  "ヽ(≧◡≦)八(o^ ^o)ノ",
+  "o(>ω<)o",
+  "｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡",
+  "σ(￣、￣〃)",
+  "(づ◡﹏◡)づ",
+  "ಥ﹏ಥ",
+  "(ﾉ>ω<)ﾉ :｡･:*:･ﾟ’★,｡･:*:･ﾟ’☆",
 ];
 
 const sparkleCat = `｡･:･ﾟ★     ,｡･:･ﾟ☆
@@ -28,7 +28,7 @@ const sparkleCat = `｡･:･ﾟ★     ,｡･:･ﾟ☆
 (¸.·´ (¸.·’* ⛧`;
 
 const cmd: Reaction = {
-  name: 'anime',
+  name: "anime",
   cooldown: COOLDOWNS.SHORT,
   probability: PROBABILITIES.ALWAYS,
   test: (msg) => {
@@ -42,12 +42,12 @@ const cmd: Reaction = {
       userData = await UserData.incrementAnime({ user_id, guild_id });
     }
 
-    const imageUrl = await getRandomImageURL('anime');
+    const imageUrl = await getRandomImageURL("anime");
     if (!imageUrl) {
-      throw new InternalError('Blank image url');
+      throw new InternalError("Blank image url");
     }
-    const urlMessage = imageUrl ? `Anime?!? ${imageUrl}` : '';
-    let countMessage: string = '';
+    const urlMessage = imageUrl ? `Anime?!? ${imageUrl}` : "";
+    let countMessage: string = "";
 
     if (userData) {
       const { anime_count } = userData;

@@ -1,32 +1,32 @@
-import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
-import type { SlashCommand } from 'bot/types';
-import SlashCommandHandler from '../SlashCommandHandler';
-import { ArgumentError } from 'util/errors';
+import { SlashCommandBuilder, type ChatInputCommandInteraction } from "discord.js";
+import type { SlashCommand } from "bot/types";
+import SlashCommandHandler from "../SlashCommandHandler";
+import { ArgumentError } from "util/errors";
 
 const cmd: SlashCommand = {
   data: new SlashCommandBuilder()
-    .setName('roll')
-    .setDescription('Rolls some dice.')
+    .setName("roll")
+    .setDescription("Rolls some dice.")
     .addStringOption((option) => option
-      .setName('expression')
-      .setDescription('An expression in d20 notation.')
+      .setName("expression")
+      .setDescription("An expression in d20 notation.")
       .setRequired(true),
     ),
   execute: handler,
 };
 
 async function handler(interaction: ChatInputCommandInteraction) {
-  const input = interaction.options.getString('expression', true);
+  const input = interaction.options.getString("expression", true);
   const rollGroups = parseD20String(input);
   const { grandTotal, resultsString } = evaluateRolls(rollGroups);
 
   const text = `${interaction.user} rolls: ${input}`;
 
-  if (input === 'd20' && grandTotal === 20) {
+  if (input === "d20" && grandTotal === 20) {
     await interaction.reply(`${text}\n=> 20\nCritical! ᕦ(ò_óˇ)ᕤ`);
     return;
   }
-  if (input === 'd20' && grandTotal === 1) {
+  if (input === "d20" && grandTotal === 1) {
     await interaction.reply(`${text}\n=> 1\nFail! (┛ಠ_ಠ)┛彡┻━┻`);
     return;
   }
@@ -60,15 +60,15 @@ type ExpressionResults = {
 
 function parseD20String(str: string): RollGroup[] {
   if (!d20Expression.test(str)) {
-    throw new ArgumentError('Invalid d20 expression');
+    throw new ArgumentError("Invalid d20 expression");
   }
   const terms = str
-    .replace(/[+-]/g, ' $& ')
+    .replace(/[+-]/g, " $& ")
     .trim()
     .split(/ +/);
 
-  if (!['+', '-'].includes(terms[0])) {
-    terms.unshift('+');
+  if (!["+", "-"].includes(terms[0])) {
+    terms.unshift("+");
   }
 
   const results: RollGroup[] = [];
@@ -79,12 +79,12 @@ function parseD20String(str: string): RollGroup[] {
     const sign = terms[i];
     const match = terms[i + 1].match(d20Term);
     if (!match) {
-      throw new ArgumentError('Invalid d20 expression');
+      throw new ArgumentError("Invalid d20 expression");
     }
 
     let numberOfDice = parseInt(match[1], 10);
     let dieSize = parseInt(match[2], 10);
-    const negative = sign === '-';
+    const negative = sign === "-";
     if (Number.isNaN(numberOfDice)) {
       numberOfDice = 1;
     }
@@ -92,10 +92,10 @@ function parseD20String(str: string): RollGroup[] {
       dieSize = 1;
     }
     if (dieSize === 0) {
-      throw new ArgumentError('Invalid d20 expression');
+      throw new ArgumentError("Invalid d20 expression");
     }
     if (numberOfDice > 999999 || dieSize > 999999999999) {
-      throw new ArgumentError('˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚ Too big!');
+      throw new ArgumentError("˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚ Too big!");
     }
     results.push({ numberOfDice, dieSize, negative });
   }
@@ -124,7 +124,7 @@ function evaluateRolls(rollGroups: RollGroup[]): ExpressionResults {
       }
       total = negative ? -total : total;
       if (numRolls <= 50) {
-        rollResultsStrings.push(`${numberOfDice > 1 ? numberOfDice : ''}d${dieSize}: [${values.join(', ')}]`);
+        rollResultsStrings.push(`${numberOfDice > 1 ? numberOfDice : ""}d${dieSize}: [${values.join(", ")}]`);
       } else {
         showRolls = false;
       }
@@ -138,7 +138,7 @@ function evaluateRolls(rollGroups: RollGroup[]): ExpressionResults {
   });
   let resultsString = null;
   if (showRolls && numRolls > 1) {
-    resultsString = rollResultsStrings.join('\n');
+    resultsString = rollResultsStrings.join("\n");
   }
   return {
     rolls,

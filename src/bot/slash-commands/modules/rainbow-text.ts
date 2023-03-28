@@ -1,10 +1,10 @@
-import { type ChatInputCommandInteraction, AttachmentBuilder, SlashCommandBuilder } from 'discord.js';
-import { createCanvas } from 'canvas';
-import GifEncoder from 'gifencoder';
-import type { SlashCommand } from 'bot/types';
-import SlashCommandHandler from '../SlashCommandHandler';
-import { WHITESPACE_REGEX } from 'util/string/regex';
-import { ArgumentError } from 'util/errors';
+import { type ChatInputCommandInteraction, AttachmentBuilder, SlashCommandBuilder } from "discord.js";
+import { createCanvas } from "canvas";
+import GifEncoder from "gifencoder";
+import type { SlashCommand } from "bot/types";
+import SlashCommandHandler from "../SlashCommandHandler";
+import { WHITESPACE_REGEX } from "util/string/regex";
+import { ArgumentError } from "util/errors";
 
 const NUM_FRAMES = 15;
 const TIME = 1000;
@@ -18,25 +18,25 @@ const MAX_HEIGHT = 600;
 
 const cmd: SlashCommand = {
   data: new SlashCommandBuilder()
-    .setName('rainbow-text')
-    .setDescription('Magical.')
+    .setName("rainbow-text")
+    .setDescription("Magical.")
     .addStringOption((option) => option
-      .setName('text')
-      .setDescription('The text to rainbow.')
+      .setName("text")
+      .setDescription("The text to rainbow.")
       .setRequired(true),
     ),
   execute: handler,
 };
 
 async function handler(interaction: ChatInputCommandInteraction) {
-  const input = interaction.options.getString('text', true);
+  const input = interaction.options.getString("text", true);
   const canvas = createCanvas(0, 0);
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
   ctx.font = FONT;
 
   const lines: string[] = [];
-  let currentLine = '';
+  let currentLine = "";
   let maxWidth = 0;
   for (let i = 0; i < input.length; i++) {
     const char = input[i];
@@ -47,7 +47,7 @@ async function handler(interaction: ChatInputCommandInteraction) {
           maxWidth = lineWidth;
         }
         lines.push(currentLine);
-        currentLine = '';
+        currentLine = "";
         continue;
       }
     }
@@ -59,7 +59,7 @@ async function handler(interaction: ChatInputCommandInteraction) {
       maxWidth = lineWidth;
     }
     lines.push(currentLine);
-    currentLine = '';
+    currentLine = "";
   }
 
   if (!lines.length) {
@@ -70,7 +70,7 @@ async function handler(interaction: ChatInputCommandInteraction) {
   const width = maxWidth;
 
   if (height > MAX_HEIGHT || width > MAX_WIDTH) {
-    throw new ArgumentError('˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚ Too big!');
+    throw new ArgumentError("˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚ Too big!");
   }
 
   canvas.width = width;
@@ -81,11 +81,11 @@ async function handler(interaction: ChatInputCommandInteraction) {
   encoder.setRepeat(0);
   encoder.setDelay(DELAY);
   encoder.setQuality(10);
-  encoder.setTransparent('#000');
+  encoder.setTransparent("#000");
 
   // No idea why I have to do this again
   ctx.font = FONT;
-  ctx.textBaseline = 'top';
+  ctx.textBaseline = "top";
 
   for (let f = 0; f < NUM_FRAMES; f++) {
     ctx.clearRect(0, 0, width, height);
@@ -100,7 +100,7 @@ async function handler(interaction: ChatInputCommandInteraction) {
 
   encoder.finish();
 
-  const attachment = new AttachmentBuilder(encoder.out.getData(), { name: 'rainbow.gif' });
+  const attachment = new AttachmentBuilder(encoder.out.getData(), { name: "rainbow.gif" });
   await interaction.reply({ files: [attachment] });
 }
 

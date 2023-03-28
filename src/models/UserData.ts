@@ -1,4 +1,4 @@
-import DB from 'db';
+import DB from "db";
 
 type UserDataSelector = {
   user_id: string,
@@ -16,17 +16,17 @@ type UserTableData = {
 
 // TODO: One day, add returned columns as a param :p
 export default class UserData {
-  public static table = 'user_data';
+  public static table = "user_data";
 
   public static async findOrCreate({ user_id, guild_id }: UserDataSelector): Promise<UserTableData> {
     let userData = await DB.knex(UserData.table)
       .where({ user_id, guild_id })
       .select()
-      .first('*');
+      .first("*");
     if (!userData) {
       [userData] = await DB.knex(UserData.table)
         .insert({ user_id, guild_id })
-        .returning('*');
+        .returning("*");
     }
     return userData;
   }
@@ -38,7 +38,7 @@ export default class UserData {
       .update({
         anime_count: userData.anime_count + 1,
       })
-      .returning('*');
+      .returning("*");
     return updatedData;
   }
 
@@ -49,7 +49,7 @@ export default class UserData {
       .update({
         unique_role: roleId,
       })
-      .returning('*');
+      .returning("*");
     return updatedData;
   }
 }

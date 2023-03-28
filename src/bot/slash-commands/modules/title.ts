@@ -1,40 +1,40 @@
-import { SlashCommandBuilder } from 'discord.js';
-import type { Guild, GuildMember, Role, ChatInputCommandInteraction } from 'discord.js';
-import type { SlashCommand } from 'bot/types';
-import SlashCommandHandler from '../SlashCommandHandler';
-import UserData from 'models/UserData';
-import { emojiIds, roleIds } from 'util/discord/constants';
-import { ArgumentError, BotError } from 'util/errors';
+import { SlashCommandBuilder } from "discord.js";
+import type { Guild, GuildMember, Role, ChatInputCommandInteraction } from "discord.js";
+import type { SlashCommand } from "bot/types";
+import SlashCommandHandler from "../SlashCommandHandler";
+import UserData from "models/UserData";
+import { emojiIds, roleIds } from "util/discord/constants";
+import { ArgumentError, BotError } from "util/errors";
 
 const cmd: SlashCommand = {
   data: new SlashCommandBuilder()
-    .setName('title')
-    .setDescription('Edits your custom unique title.')
+    .setName("title")
+    .setDescription("Edits your custom unique title.")
     .addSubcommand((subcommand) => subcommand
-      .setName('get')
-      .setDescription('Check what your currently registered title is.'),
+      .setName("get")
+      .setDescription("Check what your currently registered title is."),
     )
     .addSubcommand((subcommand) => subcommand
-      .setName('set')
-      .setDescription('Set your unique title.')
+      .setName("set")
+      .setDescription("Set your unique title.")
       .addStringOption((option) => option
-        .setName('name')
-        .setDescription('The name of your new title.')
+        .setName("name")
+        .setDescription("The name of your new title.")
         .setRequired(true),
       ),
     )
     .addSubcommand((subcommand) => subcommand
-      .setName('color')
-      .setDescription('Set the color of your unique title.')
+      .setName("color")
+      .setDescription("Set the color of your unique title.")
       .addStringOption((option) => option
-        .setName('color')
-        .setDescription('The desired color in #hex or r,g,b format.')
+        .setName("color")
+        .setDescription("The desired color in #hex or r,g,b format.")
         .setRequired(true),
       ),
     )
     .addSubcommand((subcommand) => subcommand
-      .setName('remove')
-      .setDescription('Remove your unique title.'),
+      .setName("remove")
+      .setDescription("Remove your unique title."),
     ),
   execute: async (interaction) => {
     const author = interaction.member as GuildMember;
@@ -43,7 +43,7 @@ const cmd: SlashCommand = {
 
     const placeholderRole = await guild.roles.fetch(roleIds.UniqueRolePlaceholder);
     if (!placeholderRole) {
-      throw new BotError('This server is not configured to allow user titles.');
+      throw new BotError("This server is not configured to allow user titles.");
     }
 
     const { unique_role: existingRoleId } = await UserData.findOrCreate({ user_id: author.id, guild_id: guild.id });
@@ -64,16 +64,16 @@ const cmd: SlashCommand = {
     };
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
-      case 'get':
+      case "get":
         await handleGetTitle(interaction, context);
         break;
-      case 'set':
+      case "set":
         await handleSetTitle(interaction, context);
         break;
-      case 'color':
+      case "color":
         await handleSetTitleColor(interaction, context);
         break;
-      case 'remove':
+      case "remove":
         await handleRemoveTitle(interaction, context);
         break;
     }
@@ -94,20 +94,20 @@ async function handleGetTitle(interaction: ChatInputCommandInteraction, context:
   if (existingRole) {
     await interaction.reply(`Your current title is \`${existingRole.name}\``);
   } else {
-    await interaction.reply('You currently have no title.');
+    await interaction.reply("You currently have no title.");
   }
 }
 
 async function handleSetTitle(interaction: ChatInputCommandInteraction, context: CommandContext) {
   const { author, guild, existingRole, placeholderRole } = context;
-  const input = interaction.options.getString('name', true);
+  const input = interaction.options.getString("name", true);
   if (existingRole) {
     await existingRole.setName(input);
     await interaction.reply(`Your title has been updated ${emojiIds.CoffeeCat}`);
   } else {
     const newRole = await guild.roles.create({
       name: input,
-      color: 'Random',
+      color: "Random",
       position: placeholderRole.position,
       reason: `Created by Chillbot as unique title for user ${author.id}`,
     });
@@ -119,14 +119,14 @@ async function handleSetTitle(interaction: ChatInputCommandInteraction, context:
 
 async function handleSetTitleColor(interaction: ChatInputCommandInteraction, context: CommandContext) {
   const { existingRole } = context;
-  const input = interaction.options.getString('color', true);
+  const input = interaction.options.getString("color", true);
   if (existingRole) {
     const parsedColor = parseColor(input);
-    if (!parsedColor) throw new ArgumentError('Invaild color format. Must be hex or r,g,b format.');
+    if (!parsedColor) throw new ArgumentError("Invaild color format. Must be hex or r,g,b format.");
     await existingRole.setColor(parsedColor);
     await interaction.reply(`Your title has been updated ${emojiIds.CoffeeCat}`);
   } else {
-    await interaction.reply('You currently have no title. Set one with `/title set` first!');
+    await interaction.reply("You currently have no title. Set one with `/title set` first!");
   }
 }
 
@@ -137,7 +137,7 @@ async function handleRemoveTitle(interaction: ChatInputCommandInteraction, conte
     await UserData.setUniqueRole({ user_id: author.id, guild_id: guild.id }, null);
     await interaction.reply(`Your title has been removed ${emojiIds.CoffeeCat}`);
   } else {
-    await interaction.reply('You already don\'t have a title.');
+    await interaction.reply("You already don't have a title.");
   }
 }
 

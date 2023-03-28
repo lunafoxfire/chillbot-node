@@ -1,13 +1,13 @@
-import type { Reaction } from 'bot/types';
-import ReactionHandler from '../ReactionHandler';
-import { COOLDOWNS, PROBABILITIES } from '../constants';
-import Bot from 'bot';
-import { generateGPT3Completion } from 'services/gpt-3';
+import type { Reaction } from "bot/types";
+import ReactionHandler from "../ReactionHandler";
+import { COOLDOWNS, PROBABILITIES } from "../constants";
+import Bot from "bot";
+import { generateGPT3Completion } from "services/gpt-3";
 
 const TIME_LIMIT = 1000 * 60 * 60;
 
 const cmd: Reaction = {
-  name: 'bot-mention',
+  name: "bot-mention",
   cooldown: COOLDOWNS.NONE,
   probability: PROBABILITIES.ALWAYS,
   test: (msg) => msg.mentions.has(Bot.client.user!) && !msg.mentions.everyone,

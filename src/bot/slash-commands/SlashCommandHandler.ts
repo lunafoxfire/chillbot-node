@@ -1,16 +1,16 @@
-import { Events, Routes } from 'discord.js';
-import type { Interaction } from 'discord.js';
-import Bot from 'bot/index';
-import type { SlashCommand } from 'bot/types';
-import { createLogger } from 'util/logger';
-import { guildIds } from 'util/discord/constants';
-import { importAllFromDirectory } from 'util/import';
-import { BotError } from 'util/errors';
+import { Events, Routes } from "discord.js";
+import type { Interaction } from "discord.js";
+import Bot from "bot/index";
+import type { SlashCommand } from "bot/types";
+import { createLogger } from "util/logger";
+import { guildIds } from "util/discord/constants";
+import { importAllFromDirectory } from "util/import";
+import { BotError } from "util/errors";
 
-const COMMANDS_DIR = './bot/slash-commands/modules';
+const COMMANDS_DIR = "./bot/slash-commands/modules";
 
 export default class SlashCommandHandler {
-  public static logger = createLogger('SlashCommandHandler');
+  public static logger = createLogger("SlashCommandHandler");
   private static readonly commands: Record<string, SlashCommand> = {};
 
   public static async init() {
@@ -21,7 +21,7 @@ export default class SlashCommandHandler {
   public static register(cmd: SlashCommand) {
     const name = cmd.data.name;
     if (!name) {
-      self.logger.warn('Tried to register command with no name');
+      self.logger.warn("Tried to register command with no name");
       return;
     }
     if (self.commands[name]) {
@@ -41,17 +41,17 @@ export default class SlashCommandHandler {
 
     if (Bot.isDev) {
       await Bot.restAPI.put(
-        Routes.applicationGuildCommands(process.env.CLIENT_ID || '', guildIds._dev_),
+        Routes.applicationGuildCommands(process.env.CLIENT_ID ?? "", guildIds._dev_),
         { body: commandsJSON },
       );
     } else {
       await Bot.restAPI.put(
-        Routes.applicationCommands(process.env.CLIENT_ID || ''),
+        Routes.applicationCommands(process.env.CLIENT_ID ?? ""),
         { body: commandsJSON },
       );
     }
 
-    self.logger.debug('Slash commands updated!');
+    self.logger.debug("Slash commands updated!");
   }
 
   private static async handleInteraction(interaction: Interaction) {

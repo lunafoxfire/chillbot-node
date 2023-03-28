@@ -1,11 +1,11 @@
-import type { ChatInputCommandInteraction, Message, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction, Message, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export type SlashCommand = {
   data: SlashCommandData,
   execute: SlashCommandCallback,
 };
 
-export type SlashCommandData = SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, 'addSubcommandGroup' | 'addSubcommand'>;
+export type SlashCommandData = SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">;
 
 export type SlashCommandCallback = (interaction: ChatInputCommandInteraction) => Promise<void>;
 

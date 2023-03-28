@@ -1,17 +1,17 @@
-import { Events } from 'discord.js';
-import type { Message } from 'discord.js';
-import Bot from 'bot/index';
-import type { AdminCommand } from 'bot/types';
-import { createLogger } from 'util/logger';
-import { importAllFromDirectory } from 'util/import';
-import { userIds } from 'util/discord/constants';
-import { BotError } from 'util/errors';
+import { Events } from "discord.js";
+import type { Message } from "discord.js";
+import Bot from "bot/index";
+import type { AdminCommand } from "bot/types";
+import { createLogger } from "util/logger";
+import { importAllFromDirectory } from "util/import";
+import { userIds } from "util/discord/constants";
+import { BotError } from "util/errors";
 
-const COMMAND_PREFIX = '>';
-const COMMANDS_DIR = './bot/admin-commands/modules';
+const COMMAND_PREFIX = ">";
+const COMMANDS_DIR = "./bot/admin-commands/modules";
 
 export default class AdminCommandHandler {
-  public static logger = createLogger('AdminCommandHandler');
+  public static logger = createLogger("AdminCommandHandler");
   private static readonly commands: Record<string, AdminCommand> = {};
 
   public static async init() {
@@ -22,7 +22,7 @@ export default class AdminCommandHandler {
   public static register(cmd: AdminCommand) {
     const name = cmd.name;
     if (!name) {
-      self.logger.warn('Tried to register command with no name');
+      self.logger.warn("Tried to register command with no name");
       return;
     }
     if (self.commands[name]) {

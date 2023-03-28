@@ -1,5 +1,5 @@
-import { VM } from 'vm2';
-import util from 'util';
+import { VM } from "vm2";
+import util from "util";
 
 const VM_OPTIONS = {
   timeout: 5000,
@@ -25,12 +25,12 @@ type EvalResult = {
 };
 
 function customInspect(obj: any, depth: number): string {
-  if (typeof obj === 'string' || typeof obj === 'number') {
+  if (typeof obj === "string" || typeof obj === "number") {
     return obj.toString();
   }
   if (depth >= 0 && Array.isArray(obj)) {
     const arrItemStrings = obj.map((item) => customInspect(item, depth - 1));
-    return `[${arrItemStrings.join(', ')}]`;
+    return `[${arrItemStrings.join(", ")}]`;
   }
   return util.inspect(obj);
 }

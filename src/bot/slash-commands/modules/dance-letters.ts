@@ -1,69 +1,69 @@
-import fs from 'fs';
-import path from 'path';
-import { createCanvas } from 'canvas';
-import { parseGIF, decompressFrames, type ParsedFrame } from 'gifuct-js';
-import GifEncoder from 'gifencoder';
-import { SlashCommandBuilder, AttachmentBuilder, type ChatInputCommandInteraction } from 'discord.js';
-import type { SlashCommand } from 'bot/types';
-import SlashCommandHandler from '../SlashCommandHandler';
-import { ArgumentError, BotError } from 'util/errors';
-import { SRC_DIRECTORY } from 'util/import';
+import fs from "fs";
+import path from "path";
+import { createCanvas } from "canvas";
+import { parseGIF, decompressFrames, type ParsedFrame } from "gifuct-js";
+import GifEncoder from "gifencoder";
+import { SlashCommandBuilder, AttachmentBuilder, type ChatInputCommandInteraction } from "discord.js";
+import type { SlashCommand } from "bot/types";
+import SlashCommandHandler from "../SlashCommandHandler";
+import { ArgumentError, BotError } from "util/errors";
+import { SRC_DIRECTORY } from "util/import";
 
 const NUM_FRAMES = 14;
 const LINE_HEIGHT = 80;
 const LINE_BREAK_WIDTH = 400;
 const MAX_WIDTH = 1200;
 const MAX_HEIGHT = 800;
-const DIRECTORY = path.join(SRC_DIRECTORY, '../assets/letters');
+const DIRECTORY = path.join(SRC_DIRECTORY, "../assets/letters");
 
 const GIFS: any = {
-  'a': 'a.gif',
-  'b': 'b.gif',
-  'c': 'c.gif',
-  'd': 'd.gif',
-  'e': 'e.gif',
-  'f': 'f.gif',
-  'g': 'g.gif',
-  'h': 'h.gif',
-  'i': 'i.gif',
-  'j': 'j.gif',
-  'k': 'k.gif',
-  'l': 'l.gif',
-  'm': 'm.gif',
-  'n': 'n.gif',
-  'o': 'o.gif',
-  'p': 'p.gif',
-  'q': 'q.gif',
-  'r': 'r.gif',
-  's': 's.gif',
-  't': 't.gif',
-  'u': 'u.gif',
-  'v': 'v.gif',
-  'w': 'w.gif',
-  'x': 'x.gif',
-  'y': 'y.gif',
-  'z': 'z.gif',
-  '0': '0.gif',
-  '1': '1.gif',
-  '2': '2.gif',
-  '3': '3.gif',
-  '4': '4.gif',
-  '5': '5.gif',
-  '6': '6.gif',
-  '7': '7.gif',
-  '8': '8.gif',
-  '9': '9.gif',
-  '!': '!.gif',
-  '$': '$.gif',
-  '&': '&.gif',
-  '@': '@.gif',
+  "a": "a.gif",
+  "b": "b.gif",
+  "c": "c.gif",
+  "d": "d.gif",
+  "e": "e.gif",
+  "f": "f.gif",
+  "g": "g.gif",
+  "h": "h.gif",
+  "i": "i.gif",
+  "j": "j.gif",
+  "k": "k.gif",
+  "l": "l.gif",
+  "m": "m.gif",
+  "n": "n.gif",
+  "o": "o.gif",
+  "p": "p.gif",
+  "q": "q.gif",
+  "r": "r.gif",
+  "s": "s.gif",
+  "t": "t.gif",
+  "u": "u.gif",
+  "v": "v.gif",
+  "w": "w.gif",
+  "x": "x.gif",
+  "y": "y.gif",
+  "z": "z.gif",
+  "0": "0.gif",
+  "1": "1.gif",
+  "2": "2.gif",
+  "3": "3.gif",
+  "4": "4.gif",
+  "5": "5.gif",
+  "6": "6.gif",
+  "7": "7.gif",
+  "8": "8.gif",
+  "9": "9.gif",
+  "!": "!.gif",
+  "$": "$.gif",
+  "&": "&.gif",
+  "@": "@.gif",
 };
 
 const EXTRA_PUNCTUATION: any = {
-  ' ': { width: 40 },
-  '.': { width: 0 },
-  '?': { width: 0 },
-  ',': { width: 0 },
+  " ": { width: 40 },
+  ".": { width: 0 },
+  "?": { width: 0 },
+  ",": { width: 0 },
 };
 
 type GifData = {
@@ -74,21 +74,21 @@ type GifData = {
 
 const cmd: SlashCommand = {
   data: new SlashCommandBuilder()
-    .setName('dance-letters')
-    .setDescription('Turns a message into dancing letters.')
+    .setName("dance-letters")
+    .setDescription("Turns a message into dancing letters.")
     .addStringOption((option) => option
-      .setName('text')
-      .setDescription('The text to convert.')
+      .setName("text")
+      .setDescription("The text to convert.")
       .setRequired(true),
     ),
   execute: handler,
 };
 
 async function handler(interaction: ChatInputCommandInteraction) {
-  const input = interaction.options.getString('text', true);
+  const input = interaction.options.getString("text", true);
   const normalizedInput = input.toLowerCase();
 
-  let cleanedMessage = '';
+  let cleanedMessage = "";
   const requiredGifs: any = {};
   for (let i = 0; i < normalizedInput.length; i++) {
     const char = normalizedInput[i];
@@ -101,7 +101,7 @@ async function handler(interaction: ChatInputCommandInteraction) {
   }
 
   if (!cleanedMessage.length) {
-    throw new ArgumentError('Invalid message');
+    throw new ArgumentError("Invalid message");
   }
 
   const gifData: Record<string, GifData> = {};
@@ -133,11 +133,11 @@ async function handler(interaction: ChatInputCommandInteraction) {
     throw new BotError();
   }
 
-  const words = cleanedMessage.split(' ');
+  const words = cleanedMessage.split(" ");
   const { lines, width, height } = calculateLines(words, gifData);
 
   if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-    throw new ArgumentError('˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚ Too big!');
+    throw new ArgumentError("˚‧º·(˚ ˃̣̣̥⌓˂̣̣̥ )‧º·˚ Too big!");
   }
 
   const encoder = new GifEncoder(width, height);
@@ -145,16 +145,16 @@ async function handler(interaction: ChatInputCommandInteraction) {
   encoder.setRepeat(0);
   encoder.setDelay(150);
   encoder.setQuality(10);
-  encoder.setTransparent('#000');
+  encoder.setTransparent("#000");
 
   const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
   for (let f = 0; f < NUM_FRAMES; f++) {
     let x = 0;
     let y = 0;
     for (const line of lines) {
-      const lineText = line.join(' ');
+      const lineText = line.join(" ");
       for (let i = 0; i < lineText.length; i++) {
         const char = lineText[i];
         const data = gifData[char];
@@ -178,7 +178,7 @@ async function handler(interaction: ChatInputCommandInteraction) {
   }
   encoder.finish();
 
-  const attachment = new AttachmentBuilder(encoder.out.getData(), { name: 'dancin.gif' });
+  const attachment = new AttachmentBuilder(encoder.out.getData(), { name: "dancin.gif" });
   await interaction.reply({ files: [attachment] });
 }
 
@@ -215,7 +215,7 @@ function calculateLines(words: string[], gifData: Record<string, GifData>): { li
     if (currentLineWidth >= LINE_BREAK_WIDTH) {
       newline();
     } else {
-      currentLineWidth += EXTRA_PUNCTUATION[' '].width;
+      currentLineWidth += EXTRA_PUNCTUATION[" "].width;
     }
   }
   if (currentLineWidth > 0) {

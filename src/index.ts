@@ -1,6 +1,6 @@
-import 'config';
-import DB from 'db';
-import Bot from 'bot';
+import "config";
+import DB from "db";
+import Bot from "bot";
 
 void (async () => {
   try {

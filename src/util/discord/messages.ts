@@ -1,5 +1,5 @@
-import type { Message } from 'discord.js';
-import { wait } from 'util/timer';
+import type { Message } from "discord.js";
+import { wait } from "util/timer";
 
 const TYPING_TIME = 600;
 

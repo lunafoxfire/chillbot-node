@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const PARAM_MAX = 0xffffffff;
 const IMAGES_PER_GALLERY = 16;
@@ -29,10 +29,10 @@ export async function getRandomWaifu(): Promise<WaifuResult> {
 
 export async function getWaifuByParams({ girl, color, pose }: WaifuParams): Promise<WaifuResult> {
   const { data } = await axios.request({
-    method: 'POST',
-    url: 'https://api.waifulabs.com/generate_big',
+    method: "POST",
+    url: "https://api.waifulabs.com/generate_big",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: {
       currentGirl: buildGirlSeeds({ girl, color, pose }),
@@ -59,10 +59,10 @@ export async function getPoseGallery(params: WaifuParams, numPoses: number): Pro
   const poses: number[] = [];
   for (let i = 0; i < numCalls; i++) {
     const request = axios.request({
-      method: 'POST',
-      url: 'https://api.waifulabs.com/generate',
+      method: "POST",
+      url: "https://api.waifulabs.com/generate",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       data: {
         currentGirl: buildGirlSeeds({ girl, color, pose }),
@@ -105,9 +105,9 @@ export function parseWaifuKey(id: string): { valid: boolean, params: WaifuParams
   }
 
   const [, gPart, cPart, pPart] = match;
-  const girl = gPart === '?' ? getRandomParamVal() : parseInt(gPart, 10);
-  const color = cPart === '?' ? getRandomParamVal() : parseInt(cPart, 10);
-  const pose = pPart === '?' ? getRandomParamVal() : parseInt(pPart, 10);
+  const girl = gPart === "?" ? getRandomParamVal() : parseInt(gPart, 10);
+  const color = cPart === "?" ? getRandomParamVal() : parseInt(cPart, 10);
+  const pose = pPart === "?" ? getRandomParamVal() : parseInt(pPart, 10);
 
   if (!validParam(girl) || !validParam(color) || !validParam(pose)) {
     return defaultResult;

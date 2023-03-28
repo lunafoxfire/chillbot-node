@@ -1,14 +1,13 @@
-import { Events } from 'discord.js';
-import type { Message } from 'discord.js';
-import Bot from 'bot/index';
-import type { Reaction } from 'bot/types';
-import { createLogger } from 'util/logger';
-import { sendTyping } from 'util/discord/messages';
-import { importAllFromDirectory } from 'util/import';
+import { Events } from "discord.js";
+import type { Message } from "discord.js";
+import Bot from "bot/index";
+import type { Reaction } from "bot/types";
+import { createLogger } from "util/logger";
+import { sendTyping } from "util/discord/messages";
+import { importAllFromDirectory } from "util/import";
 
-const REACTIONS_DIR = './bot/reactions/modules';
+const REACTIONS_DIR = "./bot/reactions/modules";
 
-/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 type RecentReactionsMap = {
   [guildId: string]: {
     [userId: string]: {
@@ -18,10 +17,9 @@ type RecentReactionsMap = {
     },
   },
 };
-/* eslint-enable @typescript-eslint/consistent-indexed-object-style */
 
 export default class ReactionHandler {
-  public static logger = createLogger('ReactionHandler');
+  public static logger = createLogger("ReactionHandler");
   private static readonly reactions: Record<string, Reaction> = {};
   private static readonly recentReactions: RecentReactionsMap = {};
 
@@ -33,7 +31,7 @@ export default class ReactionHandler {
   public static register(cmd: Reaction) {
     const name = cmd.name;
     if (!name) {
-      self.logger.warn('Tried to register reaction with no name');
+      self.logger.warn("Tried to register reaction with no name");
       return;
     }
     if (self.reactions[name]) {
